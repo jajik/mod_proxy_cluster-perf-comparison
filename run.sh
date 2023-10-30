@@ -54,12 +54,15 @@ run_abtest_for() {
 
     # clean
     tomcat_all_remove
+    # first preserve the error_log
+    docker cp httpd-mod_proxy_cluster:/usr/local/apache2/logs/error_log $OUTPUT_FOLDER/error_log
+    # and now we can remove it
     HTTPD_IMG=$1 httpd_all_clean
 }
 
 
 mkdir -p output/1.3/
-mkdir output/2.0/
+mkdir -p output/2.0/
 
 run_abtest_for $HTTPD_IMG_2_0
 run_abtest_for $HTTPD_IMG_1_3
