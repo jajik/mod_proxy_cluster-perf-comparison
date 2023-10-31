@@ -18,7 +18,7 @@ jobs:
       - name: Get dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install docker gcc maven git curl iproute2
+          sudo apt-get install docker gcc maven git curl iproute2 wcstools
       - name: Setup  performance tests
         run: sh setup.sh
       - name: Run performance tests
