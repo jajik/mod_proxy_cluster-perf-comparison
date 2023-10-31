@@ -23,6 +23,8 @@ jobs:
         run: sh setup.sh
       - name: Run performance tests
         run: sh run.sh
+      - name: Make a summary of test runs
+        run: sh summary.sh > summary && cp summary output/
       - name: Preserve output
         uses: actions/upload-artifact@v3
         with:
