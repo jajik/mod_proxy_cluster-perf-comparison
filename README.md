@@ -15,3 +15,5 @@ as number of tomcats, iterations count, etc.
 This suite uses docker and runs everything on a single machine, so take the results with
 a grain of salt (especially if you run it on your workstation).
 
+You can then print out summary of all runs by executing `summary.sh`.
+
