@@ -31,7 +31,7 @@ RUN make install
 # httpd is installed in /usr/local/apache2/bin/
 # build and install mod_proxy_cluster *.so files.
 WORKDIR /native
-RUN mkdir build
+RUN mkdir build || true
 WORKDIR /native/build
 RUN cmake ../ -G "Unix Makefiles" -DAPACHE_INCLUDE_DIR=/usr/local/apache2/include/
 RUN make

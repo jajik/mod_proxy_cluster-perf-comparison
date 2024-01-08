@@ -10,6 +10,7 @@ echo -n "Replacing tests from mod_proxy_cluster 1.3.x with tests from 2.x..."
 rm -rf mod_cluster-1.3.x/test/
 cp -r mod_proxy_cluster/test/ mod_cluster-1.3.x/test/
 sed -i 's|slotmem_shm_module modules/mod_slotmem_shm.so|cluster_slotmem_module modules/mod_cluster_slotmem.so|' mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
+sed -i '8s|^|LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so\n|' mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
 cp Dockerfile mod_cluster-1.3.x/test/httpd/
 echo " Done"
 
