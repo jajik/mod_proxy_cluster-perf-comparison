@@ -8,10 +8,10 @@ echo "Setting up dependencies"
 
 echo -n "Replacing tests from mod_proxy_cluster 1.3.x with tests from 2.x..."
 rm -rf mod_cluster-1.3.x/test/
+cp Dockerfile mod_proxy_cluster/test/httpd/
 cp -r mod_proxy_cluster/test/ mod_cluster-1.3.x/test/
 sed -i 's|slotmem_shm_module modules/mod_slotmem_shm.so|cluster_slotmem_module modules/mod_cluster_slotmem.so|' mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
 sed -i '8s|^|LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so\n|' mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
-cp Dockerfile mod_cluster-1.3.x/test/httpd/
 echo " Done"
 
 echo -n "Running maven installs... "
@@ -35,7 +35,11 @@ cd mod_proxy_cluster/test/
 . includes/common.sh
 # tomcat
 tomcat_create
-HTTPD_IMG=$HTTPD_IMG_2_0 httpd_create
+rm -rf httpd/mod_proxy_cluster /tmp/mod_proxy_cluster
+mkdir /tmp/mod_proxy_cluster
+cp -r ../native ../test /tmp/mod_proxy_cluster/
+mv /tmp/mod_proxy_cluster httpd/
+docker build -t $HTTPD_IMG_2_0 httpd/
 
 # httpd with mod_proxy_cluster 1.3.x
 cd ../..
