@@ -3,13 +3,13 @@
 HTTPD_IMG_1_3=${HTTPD_IMG_1_3:-httpd-mod_proxy_cluster-1.3.x}
 HTTPD_IMG_2_0=${HTTPD_IMG_2_0:-httpd-mod_proxy_cluster-2.x}
 
-APACHE_COUNT=${APACHE_COUNT:-2}
+TOMCAT_COUNT=${TOMCAT_COUNT:-2}
 CONC_COUNT=${CONC_COUNT:-100}
 REQ_COUNT=${REQ_COUNT:-1000000}
 REPETITIONS=${REPETITIONS:-10}
 
 echo "Running with following options:"
-echo "                  APACHE_COUNT=$APACHE_COUNT"
+echo "                  TOMCAT_COUNT=$TOMCAT_COUNT"
 echo "                  CONC_COUNT=$CONC_COUNT"
 echo "                  REQ_COUNT=$REQ_COUNT"
 echo "                  REPETITIONS=$REPETITIONS"
@@ -33,7 +33,7 @@ run_abtest_for() {
     HTTPD_IMG=$1 httpd_run
 
     # start tomcats
-    for i in $(seq 1 $APACHE_COUNT)
+    for i in $(seq 1 $TOMCAT_COUNT)
     do
         tomcat_start $i
         sleep 1
