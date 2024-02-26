@@ -28,7 +28,7 @@ jobs:
       - name: Run performance tests
         run: TOMCAT_COUNT=${{ matrix.tomcat_count }} sh run.sh
       - name: Make a summary of test runs
-        run: sh summary.sh > summary && cp summary output/
+        run: sh summary.sh > output/summary-with-${{ matrix.tomcat_count }}
       - name: Preserve output
         uses: actions/upload-artifact@v3
         with:
