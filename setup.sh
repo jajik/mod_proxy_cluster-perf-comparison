@@ -14,6 +14,11 @@ sed -i 's|slotmem_shm_module modules/mod_slotmem_shm.so|cluster_slotmem_module m
 sed -i '8s|^|LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so\n|' mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
 echo " Done"
 
+# Increase MaxNode to 50
+echo "MaxNode 50" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
+echo "MaxNode 50" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
+
+
 echo -n "Running maven installs... "
 for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/
 do
