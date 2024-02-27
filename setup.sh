@@ -18,6 +18,10 @@ echo " Done"
 echo "Maxnode 150" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
 echo "Maxnode 150" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
 
+# Change tomcat shutdown port to be able to use more than 75 nodes
+sed -i 's|8005|8650|' mod_cluster-1.3.x/test/tomcat/server.xml
+sed -i 's|8005|8650|' mod_proxy_cluster/test/tomcat/server.xml
+
 
 echo -n "Running maven installs... "
 for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/
