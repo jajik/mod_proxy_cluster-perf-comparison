@@ -36,9 +36,23 @@ run_abtest_for() {
     for i in $(seq 1 $TOMCAT_COUNT)
     do
         tomcat_start $i
-        sleep 1
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps
     done
+
+    sleep 1
+
+    for i in $(seq 1 $TOMCAT_COUNT)
+    do
+        # add multiple contexts but use the same app
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/app/
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/demo/
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/production
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/test1
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/test2
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/testapp
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/stub
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/legacy
+    done
+
 
     sleep 10
 
@@ -53,7 +67,12 @@ run_abtest_for() {
     done
 
     # clean
-    tomcat_all_remove
+    for i in $(seq 1 $TOMCAT_COUNT)
+    do
+        tomcat_remove $i &
+    done
+    sleep 1
+
     # first preserve the error_log
     docker cp httpd-mod_proxy_cluster:/usr/local/apache2/logs/error_log $OUTPUT_FOLDER/error_log
     # and now we can remove it

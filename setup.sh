@@ -15,8 +15,8 @@ sed -i '8s|^|LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so\n|' 
 echo " Done"
 
 # Increase MaxNode to 50
-echo "MaxNode 150" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
-echo "MaxNode 150" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
+echo "Maxnode 150" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
+echo "Maxnode 150" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
 
 
 echo -n "Running maven installs... "
