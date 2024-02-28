@@ -25,8 +25,8 @@ sed -i 's|8005|8650|' mod_proxy_cluster/test/tomcat/server.xml
 sed -i 's|-gt 75|-gt 150|' mod_cluster-1.3.x/test/includes/common.sh
 sed -i 's|-gt 75|-gt 150|' mod_proxy_cluster/test/includes/common.sh
 # Change Maxcontext to 1500
-echo "Maxcontext 600" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
-echo "Maxcontext 600" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
+echo "Maxcontext 100" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
+echo "Maxcontext 100" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
 
 echo -n "Running maven installs... "
 for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/

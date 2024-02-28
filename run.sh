@@ -43,10 +43,10 @@ run_abtest_for() {
     for i in $(seq 1 $TOMCAT_COUNT)
     do
         # add multiple contexts but use the same app
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/app/
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/test/
+#        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/app/
+#        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/test/
         docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/testapp
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/legacy
+#        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/legacy
     done
 
 
