@@ -17,3 +17,12 @@ a grain of salt (especially if you run it on your workstation).
 
 You can then print out summary of all runs by executing `summary.sh`.
 
+### Tools needed
+
+* ab
+* filename
+* sed
+* docker
+* git
+* maven
+
