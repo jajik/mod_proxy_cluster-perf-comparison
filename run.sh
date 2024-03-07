@@ -45,10 +45,14 @@ run_abtest_for() {
         # add multiple contexts but use the same app
         docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/app/
         docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/test/
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/test2/
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/test/
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/production/
         docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/testapp
         docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/legacy
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/demo/
+        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/sample/
     done
-
 
     sleep 10
 
@@ -57,7 +61,7 @@ run_abtest_for() {
     # run ab
     for i in $(seq 1 $REPETITIONS)
     do
-        echo "Running $i/$REPETITIONS run for $1"
+        echo "Running $i/$REPETITIONS run for $1     ($(date))"
         ab -c $CONC_COUNT -n $REQ_COUNT http://localhost:8000/testapp/test.jsp > $OUTPUT_FOLDER/ab-run-$c
         c=$(expr $c + 1)
     done
