@@ -2,6 +2,7 @@
 
 HTTPD_IMG_1_3=${HTTPD_IMG_1_3:-httpd-mod_proxy_cluster-1.3.x}
 HTTPD_IMG_2_0=${HTTPD_IMG_2_0:-httpd-mod_proxy_cluster-2.x}
+IMG=${IMG:-mod_proxy_cluster-testsuite-tomcat}
 
 TOMCAT_COUNT=${TOMCAT_COUNT:-2}
 CONC_COUNT=${CONC_COUNT:-100}
