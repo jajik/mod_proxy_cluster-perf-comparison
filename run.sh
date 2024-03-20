@@ -25,6 +25,25 @@ get_output_folder() {
     fi
 }
 
+tomcat_upload_contexts() {
+    if [ -z "$1" ]; then
+        echo "tomcat_upload_contexts got no argument"
+        exit 1
+    fi
+
+    # here you should specify all contexts for each node
+    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/app/
+    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/demo/
+    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/production
+    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/livedemo
+    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/application
+    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/legacy
+    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/testapp
+    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/stub
+    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/demo
+    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/sample
+}
+
 run_abtest_for() {
     if [ -z "$1" ]; then
         echo "run_abtest_for requires httpd container name"
@@ -44,15 +63,7 @@ run_abtest_for() {
     for i in $(seq 1 $TOMCAT_COUNT)
     do
         # add multiple contexts but use the same app
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/app/
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/test/
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/test2/
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/test/
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/production/
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/testapp
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/legacy
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/demo/
-        docker cp mod_proxy_cluster/test/testapp tomcat$i:/usr/local/tomcat/webapps/sample/
+        tomcat_upload_contexts $i
     done
 
     sleep 10
