@@ -14,6 +14,7 @@ echo "                  TOMCAT_COUNT=$TOMCAT_COUNT"
 echo "                  CONC_COUNT=$CONC_COUNT"
 echo "                  REQ_COUNT=$REQ_COUNT"
 echo "                  REPETITIONS=$REPETITIONS"
+echo "                  SHUTDOWN_RANDOMLY=${SHUTDOWN_RANDOMLY:-NO}"
 
 . mod_proxy_cluster/test/includes/common.sh
 
@@ -44,6 +45,28 @@ tomcat_upload_contexts() {
     docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/sample
 }
 
+# $1 equals to number of ciphers
+random_number() {
+    expr $(tr -cd 0-9 < /dev/urandom | head -c${1:-2}) + 0
+}
+
+shutdown_tomcats_randomly() {
+    ciphers=$(expr length "$TOMCAT_COUNT")
+    while true; do
+        rn=$(random_number $ciphers)
+        i=$(expr $rn % $TOMCAT_COUNT + 1)
+        seed=$(random_number 2)
+        tomcat_shutdown $i
+        sleep $(expr 10 + $seed)
+        tomcat_remove $i > /dev/null 2>&1
+        tomcat_start $i  > /dev/null 2>&1
+        sleep 10
+        tomcat_upload_contexts $i > /dev/null 2>&1
+        echo "tomcat$i is back online"
+        sleep $seed
+    done
+}
+
 run_abtest_for() {
     if [ -z "$1" ]; then
         echo "run_abtest_for requires httpd container name"
@@ -68,6 +91,12 @@ run_abtest_for() {
 
     sleep 10
 
+    if [ "$SHUTDOWN_RANDOMLY" ]; then
+        shutdown_tomcats_randomly $TOMCAT_COUNT &
+        pid=$!
+        echo "tomcats will be shutdown randomly and then brough back by process $pid"
+    fi
+
     OUTPUT_FOLDER=$(get_output_folder $1)
     c=$(ls -l $OUTPUT_FOLDER/ab-* | wc -l)
     # run ab
@@ -77,6 +106,11 @@ run_abtest_for() {
         ab -c $CONC_COUNT -n $REQ_COUNT http://localhost:8000/testapp/test.jsp > $OUTPUT_FOLDER/ab-run-$c
         c=$(expr $c + 1)
     done
+
+    if [ -z "$pid" ]; then
+        echo "Killing shutdowning process $pid"
+        kill $pid
+    fi
 
     # clean
     for i in $(seq 1 $TOMCAT_COUNT)
