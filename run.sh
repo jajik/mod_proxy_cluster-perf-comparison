@@ -107,7 +107,7 @@ run_abtest_for() {
         c=$(expr $c + 1)
     done
 
-    if [ -z "$pid" ]; then
+    if [ "$pid" ]; then
         echo "Killing shutdowning process $pid"
         kill $pid
     fi
