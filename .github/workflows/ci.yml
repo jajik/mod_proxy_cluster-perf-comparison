@@ -30,8 +30,9 @@ jobs:
         run: TOMCAT_COUNT=${{ matrix.tomcat_count }} SHUTDOWN_RANDOMLY=${{ matrix.shutdown_randomly }} sh run.sh
       - name: Make a summary of test runs
         run: |
-          sh summary.sh | tee summary && cp summary output/summary-with-${{ matrix.tomcat_count }}
-          for f in output/1.3/* output/2.0/*; do mv $f $f-for-${{ matrix.tomcat_count }}; done
+          suffix=$(if [ ${{ matrix.shutdown_randomly }} ]; then echo "-shutdown"; else echo ""; fi)
+          sh summary.sh | tee summary && cp summary output/summary-with-${{ matrix.tomcat_count }}$suffix
+          for f in output/1.3/* output/2.0/*; do mv $f $f-for-${{ matrix.tomcat_count }}$suffix; done
       - name: Preserve output
         uses: actions/upload-artifact@v3
         with:
