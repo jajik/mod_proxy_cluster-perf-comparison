@@ -14,7 +14,7 @@ echo "                  TOMCAT_COUNT=$TOMCAT_COUNT"
 echo "                  CONC_COUNT=$CONC_COUNT"
 echo "                  REQ_COUNT=$REQ_COUNT"
 echo "                  REPETITIONS=$REPETITIONS"
-echo "                  SHUTDOWN_RANDOMLY=${SHUTDOWN_RANDOMLY:-NO}"
+echo "                  SHUTDOWN_RANDOMLY=${SHUTDOWN_RANDOMLY:-0}"
 
 . mod_proxy_cluster/test/includes/common.sh
 
@@ -91,11 +91,14 @@ run_abtest_for() {
 
     sleep 10
 
-    if [ "$SHUTDOWN_RANDOMLY" ]; then
+    for i in $(seq 1 $SHUTDOWN_RANDOMLY);
+    do
         shutdown_tomcats_randomly $TOMCAT_COUNT &
+        # save the spawn process id into $@ variable
         pid=$!
         echo "tomcats will be shutdown randomly and then brough back by process $pid"
-    fi
+        set -- $@ $pid
+    done
 
     OUTPUT_FOLDER=$(get_output_folder $1)
     c=$(ls -l $OUTPUT_FOLDER/ab-* | wc -l)
@@ -107,10 +110,11 @@ run_abtest_for() {
         c=$(expr $c + 1)
     done
 
-    if [ "$pid" ]; then
-        echo "Killing shutdowning process $pid"
-        kill $pid
-    fi
+    for p in $@
+    do
+        echo "Killing shutdowning process $p"
+        kill $p
+    done
 
     # clean
     for i in $(seq 1 $TOMCAT_COUNT)
