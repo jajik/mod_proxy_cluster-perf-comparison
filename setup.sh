@@ -21,6 +21,9 @@ echo "Maxnode 150" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
 # Change tomcat shutdown port to be able to use more than 75 nodes
 sed -i 's|8005|8650|' mod_cluster-1.3.x/test/tomcat/server.xml
 sed -i 's|8005|8650|' mod_proxy_cluster/test/tomcat/server.xml
+# Change the shutdown port in the helper function as well
+sed -i 's|8005|8650|g' mod_proxy_cluster/test/includes/common.sh
+
 # Change tomcat_start check that fails if tomcat id is 75 or bigger
 sed -i 's|-gt 75|-gt 150|' mod_cluster-1.3.x/test/includes/common.sh
 sed -i 's|-gt 75|-gt 150|' mod_proxy_cluster/test/includes/common.sh
