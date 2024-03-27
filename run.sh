@@ -33,16 +33,9 @@ tomcat_upload_contexts() {
     fi
 
     # here you should specify all contexts for each node
-    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/app/
-    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/demo/
-    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/production
-    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/livedemo
-    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/application
     docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/legacy
     docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/testapp
     docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/stub
-    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/demo
-    docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/sample
 }
 
 # $1 equals to number of ciphers

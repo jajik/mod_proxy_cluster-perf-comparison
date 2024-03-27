@@ -15,8 +15,8 @@ sed -i '8s|^|LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so\n|' 
 echo " Done"
 
 # Increase MaxNode to 50
-echo "Maxnode 150" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
-echo "Maxnode 150" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
+echo "Maxnode 50" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
+echo "Maxnode 50" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
 
 # Change tomcat shutdown port to be able to use more than 75 nodes
 sed -i 's|8005|8650|' mod_cluster-1.3.x/test/tomcat/server.xml
@@ -28,8 +28,8 @@ sed -i 's|8005|8650|g' mod_proxy_cluster/test/includes/common.sh
 sed -i 's|-gt 75|-gt 150|' mod_cluster-1.3.x/test/includes/common.sh
 sed -i 's|-gt 75|-gt 150|' mod_proxy_cluster/test/includes/common.sh
 # Change Maxcontext to 1500
-echo "Maxcontext 500" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
-echo "Maxcontext 500" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
+echo "Maxcontext 150" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
+echo "Maxcontext 150" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
 
 echo -n "Running maven installs... "
 for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/
