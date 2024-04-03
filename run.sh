@@ -40,7 +40,7 @@ tomcat_upload_contexts() {
 
 # $1 equals to number of ciphers
 random_number() {
-    expr $(tr -cd 0-9 < /dev/urandom | head -c${1:-2}) + 0
+    expr $(tr -cd 0-9 < /dev/random | head -c${1:-2}) + 0
 }
 
 shutdown_tomcats_randomly() {
@@ -122,6 +122,8 @@ run_abtest_for() {
     HTTPD_IMG=$1 httpd_all_clean
 }
 
+tomcat_all_remove
+httpd_all_clean
 
 mkdir -p output/1.3/
 mkdir -p output/2.0/
