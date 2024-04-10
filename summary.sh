@@ -1,11 +1,13 @@
 #!/usr/bin/sh
 
-if [ ! -d output ]; then
+folder=${1:-output}
+
+if [ ! -d $folder ]; then
     echo "Please run the suite first"
     exit 1
 fi
 
-for v in output/*; do
+for v in $folder/*; do
     echo "Summary for $(filename $v)"
     echo "-------------------------------------------"
     # print also the header
@@ -22,4 +24,3 @@ for v in output/*; do
     done
     echo ""
 done
-
