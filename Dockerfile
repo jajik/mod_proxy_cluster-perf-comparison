@@ -37,5 +37,7 @@ RUN cmake ../ -G "Unix Makefiles" -DAPACHE_INCLUDE_DIR=/usr/local/apache2/includ
 RUN make
 RUN cp modules/*.so /usr/local/apache2/modules/
 
+RUN sed -i 's|EnableMCMPReceive|EnableMCPMReceive|' /test/httpd/mod_proxy_cluster.conf
+
 CMD /tmp/run.sh
 
