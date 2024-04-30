@@ -14,6 +14,8 @@ for v in $folder/*; do
     echo "              min  mean[+/-sd] median   max"
     for t in $v/ab-*; do
         if [ $(grep -c "Total:" $t) -eq 0 ]; then
+            echo "Failed run (ab did not finished)"
+        else
             grep -h "Total:" $t | tr -d '\n'
             echo -n "    ("
             if [ $(grep -c "Non-2xx responses" $t) -eq 0 ]; then
@@ -22,8 +24,6 @@ for v in $folder/*; do
                 grep -h "Non-2xx responses:" $t | tr -d '\n'
             fi
             echo ")"
-        else
-            echo "Failed run (ab did not finished)"
         fi
     done
     echo ""
