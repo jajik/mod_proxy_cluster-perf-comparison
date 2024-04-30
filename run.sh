@@ -118,6 +118,7 @@ run_abtest_for() {
 
     # first preserve the error_log
     docker cp httpd-mod_proxy_cluster:/usr/local/apache2/logs/error_log $OUTPUT_FOLDER/error_log
+    docker cp httpd-mod_proxy_cluster:/usr/local/apache2/logs/access_log $OUTPUT_FOLDER/access_log
     # and now we can remove it
     HTTPD_IMG=$1 httpd_all_clean
 }
