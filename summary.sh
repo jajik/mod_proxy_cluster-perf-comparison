@@ -13,14 +13,18 @@ for v in $folder/*; do
     # print also the header
     echo "              min  mean[+/-sd] median   max"
     for t in $v/ab-*; do
-        grep -h "Total:" $t | tr -d '\n'
-        echo -n "    ("
-        if [ $(grep -c "Non-2xx responses" $t) -eq 0 ]; then
-            echo -n "All responses were 2xx   "
+        if [ $(grep -c "Total:" $t) -eq 0 ]; then
+            grep -h "Total:" $t | tr -d '\n'
+            echo -n "    ("
+            if [ $(grep -c "Non-2xx responses" $t) -eq 0 ]; then
+                echo -n "All responses were 2xx   "
+            else
+                grep -h "Non-2xx responses:" $t | tr -d '\n'
+            fi
+            echo ")"
         else
-            grep -h "Non-2xx responses:" $t | tr -d '\n'
+            echo "Failed run (ab did not finished)"
         fi
-        echo ")"
     done
     echo ""
 done
