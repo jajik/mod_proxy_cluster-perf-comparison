@@ -32,7 +32,7 @@ echo "Maxcontext 150" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
 echo "Maxcontext 150" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
 
 echo -n "Running maven installs... "
-for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/
+for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/ tomcat-openshift/demo-webapp/
 do
     cd $m
     mvn install
@@ -51,6 +51,7 @@ cd mod_proxy_cluster/test/
 # load helper functions
 . includes/common.sh
 # tomcat
+cp server.xml httpd/mod_proxy_cluster/test/tomcat/
 tomcat_create
 rm -rf httpd/mod_proxy_cluster /tmp/mod_proxy_cluster
 mkdir /tmp/mod_proxy_cluster
