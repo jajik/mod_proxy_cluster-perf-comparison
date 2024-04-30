@@ -82,7 +82,7 @@ run_abtest_for() {
         tomcat_upload_contexts $i
     done
 
-    sleep 10
+    sleep 70
 
     for i in $(seq 1 $SHUTDOWN_RANDOMLY);
     do
