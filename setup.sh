@@ -69,5 +69,13 @@ cp -r /tmp/mod_proxy_cluster httpd/
 docker build -t $HTTPD_IMG_1_3 httpd/
 cd ../..
 
+cd client
+CXX=g++-12 cmake . && make
+if [ $? -ne 0 ]; then
+    echo "client compilation failed"
+    exit 1
+fi
+cd ..
+
 echo "Done"
 
