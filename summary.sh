@@ -13,7 +13,7 @@ for v in $folder/*; do
     # print also the header
     for t in $v/client-run-*; do
         cat $t
-        echo ""
+        echo "---"
     done
     echo ""
 done
