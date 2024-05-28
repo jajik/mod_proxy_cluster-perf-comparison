@@ -72,7 +72,12 @@ Stat merge(const Stat& s1, const Stat& s2) {
 
 void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) {
     Stat stat;
+
     httplib::Client client(conf.host);
+    client.set_keep_alive(true);
+    // httplib::Headers headers = {
+    // };
+
     std::chrono::milliseconds min = 0ms, max = 0ms, avg = 0ms, tmp = 0ms;
 
     latch.count_down();
