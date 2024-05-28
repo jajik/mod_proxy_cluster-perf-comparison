@@ -36,9 +36,10 @@ struct Stat {
                                 , std::chrono::milliseconds /* min */
                                 , std::chrono::milliseconds /* max */
                                 >;
+    using Errors = std::map< httplib::Error, int >;
 
     RespStats responseStatuses;
-    int errors = 0;
+    Errors errors;
     RespTimes times = { 0ms, 0ms, 0ms };
 };
 
@@ -47,7 +48,7 @@ void processResult(const httplib::Result& res, Stat& stat) {
     if (res)
         stat.responseStatuses[res->status]++;
     else
-        stat.errors++;
+        stat.errors[res.error()]++;
 }
 
 /* TODO: Use std::map::merge */
@@ -60,7 +61,13 @@ Stat merge(const Stat& s1, const Stat& s2) {
         res.responseStatuses[k] += v;
     }
 
-    res.errors = s1.errors + s2.errors;
+    for (auto [k, v] : s1.errors) {
+        res.errors[k] = v;
+    }
+    for (auto [k, v] : s2.errors) {
+        res.errors[k] += v;
+    }
+
     /* not ideal */
     res.times = { (std::get<0>(s1.times) + std::get<0>(s2.times)) / 2
                 , std::get<1>(s1.times) > std::get<1>(s2.times) ? std::get<1>(s2.times) : std::get<1>(s1.times)
@@ -145,13 +152,20 @@ int main(int argc, char* argv[]) {
         clients[i].join();
     }
 
+    std::cout << "statuses:\n";
     for (auto& [k, v] : result.responseStatuses) {
-        std::cout << "status " << k << ": " << v << std::endl;
+        std::cout << "    " << k << ": " << v << std::endl;
+    }
+    if (!result.errors.empty()) {
+        std::cout << "errors:\n";
+        for (auto& [k, v] : result.errors) {
+            std::cout << "    " << httplib::to_string(k) << ": " << v << std::endl;
+        }
     }
 
     std::cout << "avg: " << std::get<0>(result.times) << " min: " << std::get<1>(result.times)
-              << " max: " << std::get<2>(result.times) << " (errors: " << result.errors << ")" << std::endl;
+              << " max: " << std::get<2>(result.times) << std::endl;
 
-    return result.errors == 0 ? 0 : 2;
+    return result.errors.size();
 }
 
