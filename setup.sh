@@ -31,6 +31,9 @@ sed -i 's|-gt 75|-gt 150|' mod_proxy_cluster/test/includes/common.sh
 echo "Maxcontext 150" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
 echo "Maxcontext 150" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
 
+echo "ListenBackLog 1000" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
+echo "ListenBackLog 1000" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
+
 echo -n "Running maven installs... "
 for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/ tomcat-openshift/demo-webapp/
 do
