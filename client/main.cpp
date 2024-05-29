@@ -11,14 +11,21 @@
 
 using namespace std::literals::chrono_literals;
 
+inline bool isEnvDefined(const std::string& env) {
+    return std::getenv(env.c_str()) != nullptr;
+}
+
 struct Config {
     std::string host;
     std::string path;
     int clientCount = 100;
     int reqCount = 1000;
     int delay = 1;
+    bool keepAlive = true;
 
-    Config(const std::string& h, const std::string& p) : host(h), path(p) {}
+    Config(const std::string& h, const std::string& p) : host(h), path(p) {
+        keepAlive = !isEnvDefined("CLOSE_CONN");
+    }
 
     Config(const std::string& url) {
         auto pos = url.find_first_of("/");
@@ -27,6 +34,7 @@ struct Config {
 
         host = url.substr(0, pos);
         path = url.substr(pos, url.length());
+        keepAlive = !isEnvDefined("CLOSE_CONN");
     }
 };
 
@@ -118,7 +126,9 @@ int main(int argc, char* argv[]) {
     std::string arg(argv[1]);
     if ("--help" == arg || "-h" == arg) {
         std::cout << "usage: ./client <url> <client count> <request count per client> <delay between requests>"
-                  << " (default <url> 10 1000 1)" << std::endl;
+                  << " (default <url> 10 1000 1)\n"
+                  << "    by defining env variable CLOSE_CONN, connections in between requests will be closed"
+                  << std::endl;
         return 0;
     }
 
