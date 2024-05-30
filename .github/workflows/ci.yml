@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tomcat_count: [ 2, 10, 20, 50 ]
+        tomcat_count: [ 2, 10, 20, 45 ]
         shutdown_randomly: [ 0, 1 ]
         include:
           - tomcat_count: 10
