@@ -101,7 +101,7 @@ run_abtest_for() {
     do
         echo "Running $i/$REPETITIONS run for $1     ($(date))"
         # ab -c $CONC_COUNT -n $REQ_COUNT http://localhost:8000/demo-1.0/ > $OUTPUT_FOLDER/ab-run-$c
-        ./client/client localhost:8080/demo-1.0/ 200 1000 200 > $OUTPUT_FOLDER/client-run-$c
+        ./client/client localhost:8080/demo-1.0/ 200 1000 10 > $OUTPUT_FOLDER/client-run-$c
         c=$(expr $c + 1)
     done
 
