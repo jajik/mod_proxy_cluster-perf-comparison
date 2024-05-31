@@ -85,15 +85,6 @@ run_abtest_for() {
     # let everything settle...
     sleep 120
 
-    for i in $(seq 1 $SHUTDOWN_RANDOMLY);
-    do
-        #shutdown_tomcats_randomly $TOMCAT_COUNT &
-        # save the spawn process id into $@ variable
-        #pid=$!
-        #echo "tomcats will be shutdown randomly and then brough back by process $pid"
-        #set -- $@ $pid
-    done
-
     OUTPUT_FOLDER=$(get_output_folder $1)
     c=$(ls -l $OUTPUT_FOLDER/ab-* | wc -l)
     # run ab
