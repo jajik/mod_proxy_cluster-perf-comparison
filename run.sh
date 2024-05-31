@@ -87,11 +87,11 @@ run_abtest_for() {
 
     for i in $(seq 1 $SHUTDOWN_RANDOMLY);
     do
-        shutdown_tomcats_randomly $TOMCAT_COUNT &
+        #shutdown_tomcats_randomly $TOMCAT_COUNT &
         # save the spawn process id into $@ variable
-        pid=$!
-        echo "tomcats will be shutdown randomly and then brough back by process $pid"
-        set -- $@ $pid
+        #pid=$!
+        #echo "tomcats will be shutdown randomly and then brough back by process $pid"
+        #set -- $@ $pid
     done
 
     OUTPUT_FOLDER=$(get_output_folder $1)
@@ -101,7 +101,7 @@ run_abtest_for() {
     do
         echo "Running $i/$REPETITIONS run for $1     ($(date))"
         # ab -c $CONC_COUNT -n $REQ_COUNT http://localhost:8000/demo-1.0/ > $OUTPUT_FOLDER/ab-run-$c
-        ./client/client localhost:8000/demo-1.0/ 200 1000 200 > $OUTPUT_FOLDER/client-run-$c
+        ./client/client localhost:8080/demo-1.0/ 200 1000 200 > $OUTPUT_FOLDER/client-run-$c
         c=$(expr $c + 1)
     done
 
