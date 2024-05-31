@@ -31,8 +31,11 @@ sed -i 's|-gt 75|-gt 150|' mod_proxy_cluster/test/includes/common.sh
 echo "Maxcontext 150" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
 echo "Maxcontext 150" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
 
+echo "ListenBackLog 1000" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
+echo "ListenBackLog 1000" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
+
 echo -n "Running maven installs... "
-for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/
+for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/ tomcat-openshift/demo-webapp/
 do
     cd $m
     mvn install
@@ -51,6 +54,7 @@ cd mod_proxy_cluster/test/
 # load helper functions
 . includes/common.sh
 # tomcat
+cp server.xml httpd/mod_proxy_cluster/test/tomcat/
 tomcat_create
 rm -rf httpd/mod_proxy_cluster /tmp/mod_proxy_cluster
 mkdir /tmp/mod_proxy_cluster
@@ -67,6 +71,14 @@ cp -r ../native ../test /tmp/mod_proxy_cluster
 cp -r /tmp/mod_proxy_cluster httpd/
 docker build -t $HTTPD_IMG_1_3 httpd/
 cd ../..
+
+cd client
+CXX=g++-12 cmake . && make
+if [ $? -ne 0 ]; then
+    echo "client compilation failed"
+    exit 1
+fi
+cd ..
 
 echo "Done"
 

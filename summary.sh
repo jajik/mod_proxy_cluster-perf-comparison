@@ -11,20 +11,9 @@ for v in $folder/*; do
     echo "Summary for $(filename $v)"
     echo "-------------------------------------------"
     # print also the header
-    echo "              min  mean[+/-sd] median   max"
-    for t in $v/ab-*; do
-        if [ $(grep -c "Total:" $t) -eq 0 ]; then
-            echo "Failed run (ab did not finished)"
-        else
-            grep -h "Total:" $t | tr -d '\n'
-            echo -n "    ("
-            if [ $(grep -c "Non-2xx responses" $t) -eq 0 ]; then
-                echo -n "All responses were 2xx   "
-            else
-                grep -h "Non-2xx responses:" $t | tr -d '\n'
-            fi
-            echo ")"
-        fi
+    for t in $v/client-run-*; do
+        cat $t
+        echo "---"
     done
     echo ""
 done
