@@ -1,6 +1,6 @@
-ARG HTTPD_SOURCES="https://dlcdn.apache.org/httpd/httpd-2.4.59.tar.gz"
+ARG HTTPD_SOURCES="https://dlcdn.apache.org/httpd/httpd-2.4.61.tar.gz"
 
-FROM fedora:38
+FROM fedora:40
 
 RUN yum install cmake gcc g++ wget apr-devel apr-util-devel openssl-devel pcre-devel redhat-rpm-config wcstools git autoconf -y
 
