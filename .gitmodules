@@ -11,3 +11,6 @@
 	path = mod_cluster-1.3.x
 	url = https://github.com/modcluster/mod_cluster
 	branch = 1.3.x
+[submodule "tomcat-openshift"]
+	path = tomcat-openshift
+	url = https://github.com/jfclere/tomcat-openshift
