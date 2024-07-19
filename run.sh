@@ -102,7 +102,7 @@ run_abtest_for() {
         echo "Running $i/$REPETITIONS run for $1     ($(date))"
         # define RUN_WITH_AB to run the previously used `ab` utility; then instead of summary.sh use ab-summary.sh
         if [ -z "$RUN_WITH_AB" ]; then
-            ./client/client localhost:8000/demo-1.0/ 200 1000 1000 > $OUTPUT_FOLDER/client-run-$c
+            ./client/client localhost:8000/demo-1.0/ 200 1000 250 > $OUTPUT_FOLDER/client-run-$c
         else
             ab -c $CONC_COUNT -n $REQ_COUNT http://localhost:8000/testapp/test.jsp > $OUTPUT_FOLDER/ab-run-$c
         fi
