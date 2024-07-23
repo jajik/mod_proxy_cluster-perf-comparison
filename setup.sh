@@ -22,6 +22,7 @@ do
     echo "ThreadsPerChild 64"  >> $conf_file
     echo "StartServers 8"      >> $conf_file
     echo "MaxSpareThreads 256" >> $conf_file
+    echo "LogLevel notice"     >> $conf_file
 done
 
 echo -n "Running maven installs... "
