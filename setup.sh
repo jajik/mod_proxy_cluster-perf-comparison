@@ -19,10 +19,9 @@ for conf_file in mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf mod_cluster
 do
     echo "Maxnode 50"          >> $conf_file
     echo "ServerLimit 32"      >> $conf_file
-    echo "ThreadsPerChild 64"  >> $conf_file
+    echo "ThreadsPerChild 32"  >> $conf_file
     echo "StartServers 8"      >> $conf_file
     echo "MaxSpareThreads 256" >> $conf_file
-    echo "LogLevel notice"     >> $conf_file
 done
 
 echo -n "Running maven installs... "
