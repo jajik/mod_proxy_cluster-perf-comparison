@@ -15,9 +15,14 @@ sed -i '8s|^|LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so\n|' 
 echo " Done"
 
 # Increase MaxNode to 50
-echo "Maxnode 50" >> mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
-echo "Maxnode 50" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
-
+for conf_file in mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
+do
+    echo "Maxnode 50"          >> $conf_file
+    echo "ServerLimit 32"      >> $conf_file
+    echo "ThreadsPerChild 64"  >> $conf_file
+    echo "StartServers 8"      >> $conf_file
+    echo "MaxSpareThreads 256" >> $conf_file
+done
 
 echo -n "Running maven installs... "
 for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/ tomcat-openshift/demo-webapp/
