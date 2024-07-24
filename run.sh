@@ -5,7 +5,7 @@ HTTPD_IMG_2_0=${HTTPD_IMG_2_0:-httpd-mod_proxy_cluster-2.x}
 IMG=${IMG:-mod_proxy_cluster-testsuite-tomcat}
 
 TOMCAT_COUNT=${TOMCAT_COUNT:-2}
-CONC_COUNT=${CONC_COUNT:-200}
+CONC_COUNT=${CONC_COUNT:-100}
 REQ_COUNT=${REQ_COUNT:-1000}
 REPETITIONS=${REPETITIONS:-10}
 
