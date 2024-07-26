@@ -18,9 +18,6 @@ echo " Done"
 for conf_file in mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
 do
     echo "Maxnode 50"          >> $conf_file
-    echo "ServerLimit 32"      >> $conf_file
-    echo "StartServers 8"      >> $conf_file
-    echo "MaxKeepAliveRequests 500" >> $conf_file
 done
 
 echo -n "Running maven installs... "
