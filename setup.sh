@@ -20,6 +20,7 @@ do
     echo "Maxnode 50"          >> $conf_file
     echo "ServerLimit 32"      >> $conf_file
     echo "StartServers 8"      >> $conf_file
+    echo "MaxKeepAliveRequests 500" >> $conf_file
 done
 
 echo -n "Running maven installs... "
