@@ -17,7 +17,8 @@ echo " Done"
 # Increase MaxNode to 50
 for conf_file in mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
 do
-    echo "Maxnode 50"          >> $conf_file
+    echo "Maxnode 50"    >> $conf_file
+    echo "LogLevel info" >> $conf_file
 done
 
 echo -n "Running maven installs... "
