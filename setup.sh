@@ -19,7 +19,7 @@ for conf_file in mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf mod_cluster
 do
     echo "Maxnode 50"    >> $conf_file
     echo "MaxKeepAliveRequests 0" >> $conf_file
-    echo "LogLevel warn manager:trace8 proxy_cluster:debug" >> $conf_file
+    echo "LogLevel warn manager:info proxy_cluster:info" >> $conf_file
 done
 
 echo -n "Running maven installs... "
