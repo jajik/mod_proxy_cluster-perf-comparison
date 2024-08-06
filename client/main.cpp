@@ -89,9 +89,6 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
     Stat stat;
     httplib::Client client(conf.host);
     client.set_keep_alive(conf.keepAlive);
-    client.set_connection_timeout(2s);
-    client.set_read_timeout(20s);
-    client.set_write_timeout(20s);
 
     std::chrono::milliseconds min = 0ms, max = 0ms, avg = 0ms, tmp = 0ms;
 
@@ -114,6 +111,7 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
     stat.times = { avg / conf.reqCount, min, max };
 
     promise.set_value(stat);
+    client.stop();
 }
 
 void printParams(const Config& conf) {
