@@ -23,6 +23,8 @@ do
     echo "MaxKeepAliveRequests 0" >> $conf_file
 done
 
+echo "LogLevel warn proxy_http:debug" >> mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf
+
 echo -n "Running maven installs... "
 for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/ tomcat-openshift/demo-webapp/
 do
