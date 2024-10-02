@@ -66,7 +66,7 @@ run_abtest_for() {
         exit 1
     fi
     # start httpd
-    HTTPD_IMG=$1 httpd_run
+    HTTPD_IMG=$1 httpd_start
 
     # start tomcats
     for i in $(seq 1 $TOMCAT_COUNT)
@@ -126,11 +126,11 @@ run_abtest_for() {
     docker cp httpd-mod_proxy_cluster:/usr/local/apache2/logs/error_log $OUTPUT_FOLDER/error_log
     docker cp httpd-mod_proxy_cluster:/usr/local/apache2/logs/access_log $OUTPUT_FOLDER/access_log
     # and now we can remove it
-    HTTPD_IMG=$1 httpd_all_clean
+    HTTPD_IMG=$1 httpd_remove
 }
 
 tomcat_all_remove
-httpd_all_clean
+httpd_remove
 
 mkdir -p output/1.3/
 mkdir -p output/2.0/
