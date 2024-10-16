@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tomcat_count: [ 2, 10, 20, 45 ]
+        tomcat_count: [ 2, 10, 20 ]
         shutdown_randomly: [ 0, 1 ]
         include:
           - tomcat_count: 10
@@ -22,6 +22,9 @@ jobs:
             shutdown_randomly: 10
           - tomcat_count: 45
             shutdown_randomly: 15
+          - tomcat_count: 45
+            shutdown_randomly: 0
+            
     steps:
       - name: Checkout
         uses: actions/checkout@v4
