@@ -1,6 +1,7 @@
 ## Simple performance comparison testsuite
 
-*NOTE: Clone this repository with `--recurse-submodules`.*
+> [!NOTE]
+> Clone this repository with `--recurse-submodules`.*
 
 To get some basic performance comparison between mod\_proxy\_cluster 1.3.x and 2.x, run:
 
