@@ -21,6 +21,7 @@ do
     echo "ServerLimit 32"      >> $conf_file
     echo "StartServers 8"      >> $conf_file
     echo "MaxKeepAliveRequests 0" >> $conf_file
+    echo "LogLevel debug manager:trace8 proxy_cluster:trace8" >> $conf_file
 done
 
 echo -n "Running maven installs... "
