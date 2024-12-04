@@ -22,6 +22,9 @@
 <Server port="8005" shutdown="SHUTDOWN" address="tomcat_address" portOffset="port_offset">
   <Listener className="org.jboss.modcluster.container.catalina.standalone.ModClusterListener"
             connectorPort="8080"
+            stickySession="true"
+            stickySessionForce="true"
+            stickySessionRemove="false"
             proxyList="proxy_address:proxy_port" />
   <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
   <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
