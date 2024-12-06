@@ -24,6 +24,8 @@ do
     echo "LogLevel debug manager:trace8 proxy_cluster:trace8" >> $conf_file
 done
 
+cp TestServlet.java demo-webapp/src/main/java/org/example/tomcat/cloud/
+
 echo -n "Running maven installs... "
 for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/
 do
