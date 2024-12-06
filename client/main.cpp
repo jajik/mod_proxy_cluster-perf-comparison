@@ -96,7 +96,7 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
     latch.wait();
     for (int i = 0; i < conf.reqCount; i++) {
         const auto start{std::chrono::steady_clock::now()};
-        auto res = client.Get(conf.path);
+        auto res = client.Get(conf.path, httplib::Headers({ { "user-agent", "test-perf-client" } }));
         processResult(res, stat);
         const auto end{std::chrono::steady_clock::now()};
 
