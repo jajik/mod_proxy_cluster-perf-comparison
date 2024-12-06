@@ -24,7 +24,7 @@ do
 done
 
 echo -n "Running maven installs... "
-for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/ tomcat-openshift/demo-webapp/
+for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/ demo-webapp/
 do
     cd $m
     mvn install
