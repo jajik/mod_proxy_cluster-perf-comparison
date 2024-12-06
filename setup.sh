@@ -25,6 +25,7 @@ do
 done
 
 cp TestServlet.java demo-webapp/src/main/java/org/example/tomcat/cloud/
+wget https://raw.githubusercontent.com/jajik/demo-webapp/refs/heads/main/test-demo-webapp.py
 
 echo -n "Running maven installs... "
 for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/ tomcat-openshift/demo-webapp/
