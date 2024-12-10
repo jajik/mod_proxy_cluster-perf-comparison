@@ -23,8 +23,9 @@ do
     echo "MaxKeepAliveRequests 0" >> $conf_file
 done
 
+cp pom.xml demo-webapp/
 echo -n "Running maven installs... "
-for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/
+for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/ mod_cluster-1.3.x/test/ demo-webapp/
 do
     cd $m
     mvn install
@@ -34,11 +35,6 @@ do
     fi
     cd $OLDPWD
 done
-
-cd demo-webapp/
-cp ../pom.xml .
-mvn package
-cd ..
 
 echo "Done"
 
