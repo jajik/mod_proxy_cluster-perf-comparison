@@ -47,7 +47,7 @@ cd mod_proxy_cluster/test/
 # load helper functions
 . includes/common.sh
 # tomcat
-cp server.xml httpd/mod_proxy_cluster/test/tomcat/
+cp ../../server.xml tomcat/
 tomcat_create
 rm -rf httpd/mod_proxy_cluster /tmp/mod_proxy_cluster
 mkdir /tmp/mod_proxy_cluster
