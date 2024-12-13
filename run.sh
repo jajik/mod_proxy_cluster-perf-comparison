@@ -34,7 +34,7 @@ tomcat_upload_contexts() {
 
     # here you should specify all contexts for each node
     docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/legacy
-    docker cp demo-webapp/target/demo-1.0.war tomcat$1:/usr/local/tomcat/webapps-javaee/
+    docker cp demo-webapp/target/demo-1.0.war tomcat$1:/usr/local/tomcat/webapps/
     docker cp mod_proxy_cluster/test/testapp tomcat$1:/usr/local/tomcat/webapps/testapp
 }
 
