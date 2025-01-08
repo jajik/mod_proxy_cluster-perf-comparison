@@ -55,9 +55,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      # this occupies 8084 port on Ubuntu 20.04 and we don't use it
-      - name: Remove mono blocking 8084 port
-        run: sudo kill -9 $(sudo lsof -t -i:8084)
       - name: Get dependencies
         run: |
           sudo apt-get update -y
