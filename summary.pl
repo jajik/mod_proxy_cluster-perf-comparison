@@ -4,6 +4,7 @@ use v5.32;
 use warnings;
 
 use File::Basename;
+use List::Util qw( max );
 use List::MoreUtils qw( uniq );
 
 sub parse_record {
@@ -114,8 +115,10 @@ sub print_table {
     my @versions = sort (keys %{$tb->{$header[0]}});
     print_table_header ('Version', @header);
 
+    my $vlen = max(map length, @versions);
+
     foreach my $v (@versions) {
-        printf "| %7s ", $v;
+        printf "| %${vlen}s ", $v;
         foreach my $h (@header) {
             my $len = length $h;
             printf "| %${len}s ", defined $tb->{$h}{$v} ? $tb->{$h}{$v} : ' ' x $len;
