@@ -113,9 +113,11 @@ sub print_table {
 
     my @header = sort { if ($a =~ m/Status/ && $b =~ m/Status/) { $a cmp $b } else { $b cmp $a } } (keys %$tb);
     my @versions = sort (keys %{$tb->{$header[0]}});
-    print_table_header ('Version', @header);
-
     my $vlen = max(map length, @versions);
+
+    my $version_padded = 'Version' . (' ' x ($vlen > 7 ? $vlen - 7 : 0));
+
+    print_table_header ($version_padded, @header);
 
     foreach my $v (@versions) {
         printf "| %${vlen}s ", $v;

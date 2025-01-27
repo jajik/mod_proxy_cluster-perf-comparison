@@ -1,7 +1,7 @@
 #!/usr/bin/sh
 
 HTTPD_IMG_1_3=${HTTPD_IMG_1_3:-httpd-mod_proxy_cluster-1.3.x}
-HTTPD_IMG_2_0=${HTTPD_IMG_2_0:-httpd-mod_proxy_cluster-2.x}
+HTTPD_IMG_2_0=${HTTPD_IMG_2_0:-httpd-mod_proxy_cluster-1.3.x-workaround}
 IMG=${IMG:-mod_proxy_cluster-testsuite-tomcat}
 
 TOMCAT_COUNT=${TOMCAT_COUNT:-2}
@@ -22,7 +22,7 @@ get_output_folder() {
     if [ "$1" = $HTTPD_IMG_1_3 ]; then
         echo "output/1.3/"
     else
-        echo "output/2.0/"
+        echo "output/1.3-workaround/"
     fi
 }
 
@@ -133,7 +133,8 @@ tomcat_all_remove
 httpd_remove
 
 mkdir -p output/1.3/
-mkdir -p output/2.0/
+
+mkdir -p output/1.3-workaround/
 
 run_abtest_for $HTTPD_IMG_2_0
 run_abtest_for $HTTPD_IMG_1_3

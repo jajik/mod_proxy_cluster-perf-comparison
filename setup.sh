@@ -1,7 +1,7 @@
 #!/usr/bin/sh
 
 export HTTPD_IMG_1_3=${HTTPD_IMG_1_3:-httpd-mod_proxy_cluster-1.3.x}
-export HTTPD_IMG_2_0=${HTTPD_IMG_2_0:-httpd-mod_proxy_cluster-2.x}
+export HTTPD_IMG_2_0=${HTTPD_IMG_2_0:-httpd-mod_proxy_cluster-1.3.x-workaround}
 export IMG=${IMG:-mod_proxy_cluster-testsuite-tomcat}
 
 echo "Setting up dependencies"
@@ -45,11 +45,6 @@ cd mod_proxy_cluster/test/
 # tomcat
 # cp ../../server.xml tomcat/
 tomcat_create
-rm -rf httpd/mod_proxy_cluster /tmp/mod_proxy_cluster
-mkdir /tmp/mod_proxy_cluster
-cp -r ../native ../test /tmp/mod_proxy_cluster/
-mv /tmp/mod_proxy_cluster httpd/
-docker build -t $HTTPD_IMG_2_0 httpd/
 
 # httpd with mod_proxy_cluster 1.3.x
 cd ../..
@@ -59,6 +54,10 @@ mkdir /tmp/mod_proxy_cluster/
 cp -r ../native ../test /tmp/mod_proxy_cluster
 cp -r /tmp/mod_proxy_cluster httpd/
 docker build -t $HTTPD_IMG_1_3 httpd/
+
+echo "WaitBeforeRemove 180" >> httpd/mod_proxy_cluster.conf
+docker build -t $HTTPD_IMG_2_0 httpd/
+
 cd ../..
 
 cd client
