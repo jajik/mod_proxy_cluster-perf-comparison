@@ -116,6 +116,7 @@ sub print_table {
     my $vlen = max(map length, @versions);
 
     my $version_padded = 'Version' . (' ' x ($vlen > 7 ? $vlen - 7 : 0));
+    $vlen = length $version_padded;
 
     print_table_header ($version_padded, @header);
 
