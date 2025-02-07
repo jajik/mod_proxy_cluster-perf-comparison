@@ -21,6 +21,10 @@ do
     echo "ServerLimit 32"      >> $conf_file
     echo "StartServers 8"      >> $conf_file
     echo "MaxKeepAliveRequests 0" >> $conf_file
+    if [ $HTTPD_LOG_LEVEL ]; then
+        echo "Setting log level to $HTTPD_LOG_LEVEL"
+        echo "LogLevel $HTTPD_LOG_LEVEL" >> $conf_file
+    fi
 done
 
 echo -n "Running maven installs... "
