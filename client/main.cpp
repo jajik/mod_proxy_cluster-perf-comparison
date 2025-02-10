@@ -28,13 +28,16 @@ struct Config {
     }
 
     Config(const std::string& url) {
-        auto pos = url.find_first_of("/");
-        if (pos == url.npos)
-            throw std::runtime_error("Invalid url: missing app part");
-
-        host = url.substr(0, pos);
-        path = url.substr(pos, url.length());
         keepAlive = !isEnvDefined("CLOSE_CONN");
+
+        auto pos = url.find_first_of("/");
+        if (pos == url.npos) {
+            host = url;
+            path = "/";            
+        } else {
+            host = url.substr(0, pos);
+            path = url.substr(pos, url.length());
+        }
     }
 };
 
