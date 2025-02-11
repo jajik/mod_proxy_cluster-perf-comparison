@@ -1,6 +1,7 @@
 #include "httplib.h"
 #include <algorithm>
 #include <chrono>
+#include <optional>
 #include <string>
 #include <vector>
 #include <thread>
@@ -52,14 +53,50 @@ struct Stat {
     RespStats responseStatuses;
     Errors errors;
     RespTimes times = { 0ms, 0ms, 0ms };
+
+    std::optional< std::string > jsessionid;
 };
 
 
+std::optional< std::string > getJSESSIONID(const httplib::Headers& headers) {
+    for (auto [k, v] : headers) {
+        if (k == "Set-Cookie") {
+            std::string::size_type start = 0, n;
+
+            while ((n = v.find("; ", start)) != std::string::npos) {
+                std::string val = v.substr(start, n);
+
+                if (val.starts_with("JSESSIONID=")) {
+                    return { val.substr(11) };
+                }
+                start = n + 2;
+            }
+
+            std::string val = v.substr(start);
+            if (val.starts_with("JSESSIONID")) {
+                return { val.substr(11) };
+            }
+        }
+    }
+
+    return std::nullopt;
+}
+
 void processResult(const httplib::Result& res, Stat& stat) {
-    if (res)
+    if (res) {
         stat.responseStatuses[res->status]++;
-    else
+    } else {
         stat.errors[res.error()]++;
+    }
+
+    auto val = getJSESSIONID(res.value().headers);
+    if (!stat.jsessionid) {
+        stat.jsessionid = val;
+    } else if (val && *stat.jsessionid != *val) {
+        std::cout << "STICKINESS BREAK! Expected: " << *stat.jsessionid << " but got: " << *val << " (in error " << res << ")" << std::endl;
+        // We'll record the stickyness break as an additional error by using Error::Success (TODO: not ideal)
+        stat.errors[httplib::Error::Success]++;
+    }
 }
 
 /* TODO: Use std::map::merge */
@@ -94,12 +131,19 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
     client.set_keep_alive(conf.keepAlive);
 
     std::chrono::milliseconds min = 0ms, max = 0ms, avg = 0ms, tmp = 0ms;
+    std::string cookie;
 
     latch.count_down();
     latch.wait();
     for (int i = 0; i < conf.reqCount; i++) {
         const auto start{std::chrono::steady_clock::now()};
-        auto res = client.Get(conf.path);
+
+        if (stat.jsessionid) {
+            cookie = "JSESSIONID=";
+            cookie.append(*stat.jsessionid);
+        }
+
+        auto res = stat.jsessionid ? client.Get(conf.path, { { "Cookie", cookie } }) : client.Get(conf.path);
         processResult(res, stat);
         const auto end{std::chrono::steady_clock::now()};
 
