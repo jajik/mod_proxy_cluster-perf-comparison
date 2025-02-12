@@ -23,13 +23,16 @@ struct Config {
     int reqCount = 1000;
     int delay = 1;
     bool keepAlive = true;
+    bool checkStickiness = false;
 
     Config(const std::string& h, const std::string& p) : host(h), path(p) {
         keepAlive = !isEnvDefined("CLOSE_CONN");
+        checkStickiness = !isEnvDefined("SHUTDOWN_RANDOMLY");
     }
 
     Config(const std::string& url) {
         keepAlive = !isEnvDefined("CLOSE_CONN");
+        checkStickiness = !isEnvDefined("SHUTDOWN_RANDOMLY");
 
         auto pos = url.find_first_of("/");
         if (pos == url.npos) {
@@ -82,12 +85,14 @@ std::optional< std::string > getJSESSIONID(const httplib::Headers& headers) {
     return std::nullopt;
 }
 
-void processResult(const httplib::Result& res, Stat& stat) {
+void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness) {
     if (res) {
         stat.responseStatuses[res->status]++;
     } else {
         stat.errors[res.error()]++;
     }
+
+    if (!checkStickiness) return;
 
     auto val = getJSESSIONID(res.value().headers);
     if (!stat.jsessionid) {
@@ -144,7 +149,7 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
         }
 
         auto res = stat.jsessionid ? client.Get(conf.path, { { "Cookie", cookie } }) : client.Get(conf.path);
-        processResult(res, stat);
+        processResult(res, stat, conf.checkStickiness);
         const auto end{std::chrono::steady_clock::now()};
 
         tmp = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
