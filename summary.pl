@@ -145,7 +145,11 @@ sub print_results {
     foreach my $file (sort @files) {
         say "\n## $file";
         my $table = create_table $data, $file;
-        print_table $table;
+        if (keys %$table >= 3) {
+            print_table $table;
+        } else {
+            say "Something went wrong while parsing $file";
+        }
     } 
 }
 
