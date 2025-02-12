@@ -9,8 +9,10 @@ CONC_COUNT=${CONC_COUNT:-100}
 REQ_COUNT=${REQ_COUNT:-1000}
 REPETITIONS=${REPETITIONS:-10}
 SHUTDOWN_RANDOMLY=${SHUTDOWN_RANDOMLY:-0}
+DISABLE_RANDOMLY=${DISABLE_RANDOMLY:-0}
 
 SHUTDOWN_PROCESS_FILE=${SHUTDOWN_PROCESS_FILE:-shutdown_processes}
+DISABLE_PROCESS_FILE=${DISABLE_PROCESS_FILE:-disable_processes}
 
 echo "Running with following options:"
 echo "                  TOMCAT_COUNT=$TOMCAT_COUNT"
@@ -18,6 +20,7 @@ echo "                  CONC_COUNT=$CONC_COUNT"
 echo "                  REQ_COUNT=$REQ_COUNT"
 echo "                  REPETITIONS=$REPETITIONS"
 echo "                  SHUTDOWN_RANDOMLY=${SHUTDOWN_RANDOMLY}"
+echo "                  DISABLE_RANDOMLY=${DISABLE_RANDOMLY}"
 
 . mod_proxy_cluster/test/includes/common.sh
 
@@ -63,6 +66,21 @@ shutdown_tomcats_randomly() {
     done
 }
 
+disable_tomcats_randomly() {
+    ciphers=$(expr length "$TOMCAT_COUNT")
+    while true; do
+        rn=$(random_number $ciphers)
+        i=$(expr $rn % $TOMCAT_COUNT + 1)
+        seed=$(random_number 2)
+        echo "Sending DISABLE-APP to tomcat$i"
+        curl -s -o /dev/null -i -XDISABLE-APP -d "JVMRoute=tomcat$i" http://localhost:6666/*
+        sleep $(expr 20 + $seed)
+        echo "Sending ENABLE-APP to tomcat$i"
+        curl -s -o /dev/null -i -XENABLE-APP -d "JVMRoute=tomcat$i" http://localhost:6666/*
+        sleep $seed
+    done
+}
+
 run_abtest_for() {
     if [ -z "$1" ]; then
         echo "run_abtest_for requires httpd container name"
@@ -94,8 +112,17 @@ run_abtest_for() {
         shutdown_tomcats_randomly $TOMCAT_COUNT &
         # save the spawn process id into $@ variable
         pid=$!
-        echo "tomcats will be shutdown randomly and then brough back by process $pid"
+        echo "tomcats will be shutdown randomly and then brought back by process $pid"
         echo $pid >> $SHUTDOWN_PROCESS_FILE
+    done
+
+    touch $DISABLE_PROCESS_FILE
+    for i in $(seq 1 $DISABLE_RANDOMLY)
+    do
+        disable_tomcats_randomly $TOMCAT_COUNT &
+        pid=$!
+        echo "tomcats will be disables randomly and then brought back by process $pid"
+        echo $pid >> $DISABLE_PROCESS_FILE
     done
 
     OUTPUT_FOLDER=$(get_output_folder $1)
@@ -119,6 +146,13 @@ run_abtest_for() {
         kill $p
     done
     rm $SHUTDOWN_PROCESS_FILE
+
+    for p in $(cat $DISABLE_PROCESS_FILE)
+    do
+        echo "Killing disabling process $p"
+        kill $p
+    done
+    rm $DISABLE_PROCESS_FILE
 
     # clean
     for i in $(seq 1 $TOMCAT_COUNT)
