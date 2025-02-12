@@ -37,6 +37,11 @@ jobs:
               HTTPD_LOG_LEVEL=debug
 
           - tomcat_count: 20
+            env: |
+              HTTPD_LOG_LEVEL=debug
+              DISABLE_RANDOMLY=15
+
+          - tomcat_count: 20
             shutdown_randomly: 0
           - tomcat_count: 20
             shutdown_randomly: 2
