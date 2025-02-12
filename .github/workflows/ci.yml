@@ -26,36 +26,42 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - tomcat_count: 2
-            shutdown_randomly: 0
+
+          - name: "2-tomcats"
             env: |
+              TOMCAT_COUNT=2
               HTTPD_LOG_LEVEL=debug
 
-          - tomcat_count: 2
-            shutdown_randomly: 1
+          - name: "2-tomcats-1-shutdown"
             env: |
+              TOMCAT_COUNT=2
+              SHUTDOWN_RANDOMLY=1
               HTTPD_LOG_LEVEL=debug
 
-          - tomcat_count: 20
+          - name: "20-tomcats-15-disable"
             env: |
+              TOMCAT_COUNT=20
               HTTPD_LOG_LEVEL=debug
               DISABLE_RANDOMLY=15
 
-          - tomcat_count: 20
-            shutdown_randomly: 0
-          - tomcat_count: 20
-            shutdown_randomly: 2
-          - tomcat_count: 20
-            shutdown_randomly: 10
+          - name: "20-tomcats"
             env: |
+              TOMCAT_COUNT=20
+
+          - name: "20-tomcats-10-shutdown"
+            env: |
+              TOMCAT_COUNT=20
+              SHUTDOWN_RANDOMLY=10
               HTTPD_LOG_LEVEL=debug
 
-          - tomcat_count: 50
-            shutdown_randomly: 0
-          - tomcat_count: 50
-            shutdown_randomly: 5
-          - tomcat_count: 50
-            shutdown_randomly: 25
+          - name: "50-tomcats"
+            env: |
+              TOMCAT_COUNT=50
+
+          - name: "50-tomcats-30-shutdown"
+            env: |
+              TOMCAT_COUNT=50
+              SHUTDOWN_RANDOMLY=30
 
     steps:
       - name: Checkout
@@ -76,15 +82,14 @@ jobs:
       - name: Setup  performance tests
         run: sh setup.sh
       - name: Run performance tests
-        run: TOMCAT_COUNT=${{ matrix.tomcat_count }} SHUTDOWN_RANDOMLY=${{ matrix.shutdown_randomly }} sh run.sh
+        run: sh run.sh
       - name: Make a summary of test runs
         run: |
-          suffix=$(if [ ${{ matrix.shutdown_randomly }} -gt 0 ]; then echo "-shutdown${{ matrix.shutdown_randomly }}"; else echo ""; fi)
-          perl summary.pl output/ | tee summary && cp summary output/summary-with-${{ matrix.tomcat_count }}$suffix
+          perl summary.pl output/ | tee summary && cp summary output/summary-for-${{ matrix.name }}
       - name: Preserve output
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Output-for-${{ matrix.tomcat_count }}-shutdown-${{ matrix.shutdown_randomly }}
+          name: Output-for-${{ matrix.name }}
           path: output/*
 
