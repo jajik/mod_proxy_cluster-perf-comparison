@@ -27,15 +27,16 @@ jobs:
       matrix:
         include:
 
-          - name: "2-tomcats"
+          - name: "5-tomcats-4-disable"
             env: |
-              TOMCAT_COUNT=2
+              TOMCAT_COUNT=5
+              DISABLE_RANDOMLY=4
               HTTPD_LOG_LEVEL=debug
 
-          - name: "2-tomcats-1-shutdown"
+          - name: "2-tomcats-1-disable"
             env: |
               TOMCAT_COUNT=2
-              SHUTDOWN_RANDOMLY=1
+              DISABLE_RANDOMLY=1
               HTTPD_LOG_LEVEL=debug
 
           - name: "15-tomcats-15-disable"
@@ -50,24 +51,26 @@ jobs:
               HTTPD_LOG_LEVEL=debug
               DISABLE_RANDOMLY=15
 
-          - name: "20-tomcats"
+          - name: "75-tomcats-65-disable"
             env: |
-              TOMCAT_COUNT=20
+              TOMCAT_COUNT=75
+              DISABLE_RANDOMLY=65
 
-          - name: "20-tomcats-10-shutdown"
+          - name: "20-tomcats-10-disable"
             env: |
               TOMCAT_COUNT=20
-              SHUTDOWN_RANDOMLY=10
+              DISABLE_RANDOMLY=10
               HTTPD_LOG_LEVEL=debug
 
-          - name: "50-tomcats"
+          - name: "50-tomcats-45-disable"
             env: |
               TOMCAT_COUNT=50
+              DISABLE_RANDOMLY=45
 
-          - name: "50-tomcats-30-shutdown"
+          - name: "50-tomcats-30-disable"
             env: |
               TOMCAT_COUNT=50
-              SHUTDOWN_RANDOMLY=30
+              DISABLE_RANDOMLY=30
 
     steps:
       - name: Checkout
