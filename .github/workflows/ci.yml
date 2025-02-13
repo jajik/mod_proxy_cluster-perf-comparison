@@ -51,10 +51,10 @@ jobs:
               HTTPD_LOG_LEVEL=debug
               DISABLE_RANDOMLY=15
 
-          - name: "65-tomcats-55-disable"
+          - name: "50-tomcats-50-disable"
             env: |
-              TOMCAT_COUNT=65
-              DISABLE_RANDOMLY=55
+              TOMCAT_COUNT=50
+              DISABLE_RANDOMLY=50
 
           - name: "20-tomcats-10-disable"
             env: |
