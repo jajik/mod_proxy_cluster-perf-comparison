@@ -31,7 +31,6 @@ jobs:
             env: |
               TOMCAT_COUNT=5
               DISABLE_RANDOMLY=4
-              HTTPD_LOG_LEVEL=debug
 
           - name: "2-tomcats-1-disable"
             env: |
@@ -48,7 +47,6 @@ jobs:
           - name: "20-tomcats-15-disable"
             env: |
               TOMCAT_COUNT=20
-              HTTPD_LOG_LEVEL=debug
               DISABLE_RANDOMLY=15
 
           - name: "50-tomcats-50-disable"
@@ -60,7 +58,6 @@ jobs:
             env: |
               TOMCAT_COUNT=20
               DISABLE_RANDOMLY=10
-              HTTPD_LOG_LEVEL=debug
 
           - name: "50-tomcats-45-disable"
             env: |
