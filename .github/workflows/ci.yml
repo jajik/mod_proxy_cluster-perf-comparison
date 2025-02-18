@@ -20,7 +20,7 @@ on:
 
 jobs:
 
-  run-perf-tests:
+  perf-run:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -37,6 +37,12 @@ jobs:
               TOMCAT_COUNT=2
               SHUTDOWN_RANDOMLY=1
               HTTPD_LOG_LEVEL=debug
+
+          - name: "15-tomcats-15-disable"
+            env: |
+              TOMCAT_COUNT=15
+              HTTPD_LOG_LEVEL=debug
+              DISABLE_RANDOMLY=15
 
           - name: "20-tomcats-15-disable"
             env: |
