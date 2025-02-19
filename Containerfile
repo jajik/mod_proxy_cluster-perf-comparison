@@ -1,4 +1,4 @@
-FROM fedora:40
+FROM fedora:41
 
 RUN yum install cmake gcc g++ wget apr-devel apr-util-devel openssl-devel pcre-devel redhat-rpm-config wcstools git autoconf -y
 
