@@ -9,7 +9,6 @@ echo "Setting up dependencies"
 echo -n "Replacing tests from mod_proxy_cluster 1.3.x with tests from 2.x..."
 rm -rf mod_cluster-1.3.x/test/
 cp -r mod_proxy_cluster/test/ mod_cluster-1.3.x/test/
-rm mod_cluster-1.3.x/test/httpd/Dockerfile
 cp Containerfile mod_cluster-1.3.x/test/httpd/
 
 sed -i 's|slotmem_shm_module.*modules/mod_slotmem_shm.so|cluster_slotmem_module modules/mod_cluster_slotmem.so|' mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
@@ -55,7 +54,7 @@ rm -rf httpd/mod_proxy_cluster /tmp/mod_proxy_cluster
 mkdir /tmp/mod_proxy_cluster
 cp -r ../native ../test /tmp/mod_proxy_cluster/
 mv /tmp/mod_proxy_cluster httpd/
-docker build -t $HTTPD_IMG_2_0 httpd/
+docker build -t $HTTPD_IMG_2_0 -f httpd/Containerfile httpd/
 
 # httpd with mod_proxy_cluster 1.3.x
 cd ../..
