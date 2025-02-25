@@ -92,7 +92,8 @@ void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness)
         stat.errors[res.error()]++;
     }
 
-    if (!checkStickiness) return;
+    // We can't get any cookie in case of an error
+    if (!res || !checkStickiness) return;
 
     auto val = getJSESSIONID(res.value().headers);
     if (!stat.jsessionid) {
