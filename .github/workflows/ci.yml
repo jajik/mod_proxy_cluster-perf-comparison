@@ -84,7 +84,7 @@ jobs:
       - name: Get dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install moby-engine moby-cli gcc maven git curl iproute2 wcstools g++-12 cmake liblist-moreutils-perl
+          sudo apt-get install podman-docker gcc maven git curl iproute2 wcstools g++-12 cmake liblist-moreutils-perl
       - name: Setup  performance tests
         run: sh setup.sh
       - name: Run performance tests
