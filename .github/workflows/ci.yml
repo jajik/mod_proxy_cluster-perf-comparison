@@ -58,7 +58,6 @@ jobs:
             env: |
               TOMCAT_COUNT=20
               SHUTDOWN_RANDOMLY=10
-              HTTPD_LOG_LEVEL=debug
 
           - name: "50-tomcats"
             env: |
