@@ -99,7 +99,9 @@ void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness)
     if (!stat.jsessionid) {
         stat.jsessionid = val;
     } else if (val && *stat.jsessionid != *val) {
-        std::cout << "STICKINESS BREAK! Expected: " << *stat.jsessionid << " but got: " << *val << " (in error " << res << ")" << std::endl;
+        std::cout << std::chrono::system_clock::now()
+                  << "STICKINESS BREAK! Expected: " << *stat.jsessionid
+                  << " but got: " << *val << " (in error " << res << ")" << std::endl;
         // We'll record the stickyness break as an additional error by using Error::Success (TODO: not ideal)
         stat.errors[httplib::Error::Success]++;
     }
