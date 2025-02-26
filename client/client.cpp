@@ -62,7 +62,7 @@ struct Stat {
 
 
 std::optional< std::string > getJSESSIONID(const httplib::Headers& headers) {
-    for (auto [k, v] : headers) {
+    for (const auto& [k, v] : headers) {
         if (k == "Set-Cookie") {
             std::string::size_type start = 0, n;
 
@@ -109,17 +109,19 @@ void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness)
 
 Stat merge(const Stat& s1, const Stat& s2) {
     Stat res;
-    for (auto [k, v] : s1.responseStatuses) {
+
+    for (const auto& [k, v] : s1.responseStatuses) {
         res.responseStatuses[k] = v;
     }
-    for (auto [k, v] : s2.responseStatuses) {
+
+    for (const auto& [k, v] : s2.responseStatuses) {
         res.responseStatuses[k] += v;
     }
 
-    for (auto [k, v] : s1.errors) {
+    for (const auto& [k, v] : s1.errors) {
         res.errors[k] = v;
     }
-    for (auto [k, v] : s2.errors) {
+    for (const auto& [k, v] : s2.errors) {
         res.errors[k] += v;
     }
 
@@ -220,12 +222,12 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "statuses:\n";
-    for (auto& [k, v] : result.responseStatuses) {
+    for (const auto& [k, v] : result.responseStatuses) {
         std::cout << "    " << k << ": " << v << std::endl;
     }
     if (!result.errors.empty()) {
         std::cout << "errors:\n";
-        for (auto& [k, v] : result.errors) {
+        for (const auto& [k, v] : result.errors) {
             std::cout << "    " << httplib::to_string(k) << ": " << v << std::endl;
         }
     }
