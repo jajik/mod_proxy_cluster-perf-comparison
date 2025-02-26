@@ -105,7 +105,6 @@ void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness)
     }
 }
 
-/* TODO: Use std::map::merge */
 Stat merge(const Stat& s1, const Stat& s2) {
     Stat res;
     for (auto [k, v] : s1.responseStatuses) {
