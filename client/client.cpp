@@ -58,6 +58,7 @@ struct Stat {
     RespTimes times = { 0ms, 0ms, 0ms };
 
     std::optional< std::string > jsessionid;
+    std::map< std::string, int > nodes;
 };
 
 
@@ -85,6 +86,15 @@ std::optional< std::string > getJSESSIONID(const httplib::Headers& headers) {
     return std::nullopt;
 }
 
+std::optional< std::string > getNode(const std::string& str) {
+    std::string::size_type pos = str.find_first_of(".");
+    if (pos != std::string::npos) {
+        return { str.substr(pos + 1) };
+    }
+
+    return std::nullopt;
+}
+
 void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness) {
     if (res) {
         stat.responseStatuses[res->status]++;
@@ -105,6 +115,13 @@ void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness)
         // We'll record the stickyness break as an additional error by using Error::Success (TODO: not ideal)
         stat.errors[httplib::Error::Success]++;
     }
+
+    if (val) {
+        auto node = getNode(*val);
+        if (node) {
+            stat.nodes[*node]++;
+        }
+    }
 }
 
 Stat merge(const Stat& s1, const Stat& s2) {
@@ -123,6 +140,14 @@ Stat merge(const Stat& s1, const Stat& s2) {
     }
     for (const auto& [k, v] : s2.errors) {
         res.errors[k] += v;
+    }
+
+    for (const auto& [node, count] : s1.nodes) {
+        res.nodes[node] = count;
+    }
+
+    for (const auto& [node, count] : s2.nodes) {
+        res.nodes[node] += count;
     }
 
     /* not ideal */
@@ -229,6 +254,13 @@ int main(int argc, char* argv[]) {
         std::cout << "errors:\n";
         for (const auto& [k, v] : result.errors) {
             std::cout << "    " << httplib::to_string(k) << ": " << v << std::endl;
+        }
+    }
+
+    if (!result.nodes.empty()) {
+        std::cout << "distribution:\n";
+        for (const auto& [n, count] : result.nodes) {
+            std::cout << "    " << n << ": " << count << std::endl;
         }
     }
 
