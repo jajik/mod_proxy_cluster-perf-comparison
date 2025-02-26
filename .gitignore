@@ -2,3 +2,7 @@ output/**
 nohup.out
 .vscode/**
 
+client/**
+!client/client.cpp
+!client/CMakeLists.txt
+
