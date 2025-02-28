@@ -27,12 +27,12 @@ struct Config {
 
     Config(const std::string& h, const std::string& p) : host(h), path(p) {
         keepAlive = !isEnvDefined("CLOSE_CONN");
-        checkStickiness = !isEnvDefined("SHUTDOWN_RANDOMLY");
+        checkStickiness = !isEnvDefined("SHUTDOWN_RANDOMLY") || *std::getenv("SHUTDOWN_RANDOMLY") == '0';
     }
 
     Config(const std::string& url) {
         keepAlive = !isEnvDefined("CLOSE_CONN");
-        checkStickiness = !isEnvDefined("SHUTDOWN_RANDOMLY");
+        checkStickiness = !isEnvDefined("SHUTDOWN_RANDOMLY") || *std::getenv("SHUTDOWN_RANDOMLY") == '0';
 
         auto pos = url.find_first_of("/");
         if (pos == url.npos) {
