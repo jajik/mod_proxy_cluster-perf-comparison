@@ -95,7 +95,7 @@ run_abtest_for() {
         tomcat_start $i
     done
 
-    sleep 1
+    sleep 10
 
     for i in $(seq 1 $TOMCAT_COUNT)
     do
