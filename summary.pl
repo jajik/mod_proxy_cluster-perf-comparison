@@ -4,7 +4,7 @@ use v5.32;
 use warnings;
 
 use File::Basename;
-use List::Util qw( max );
+use List::Util qw( max sum );
 use List::MoreUtils qw( uniq );
 
 sub parse_record {
@@ -93,6 +93,37 @@ sub create_table {
             $rec{$v} = $data->{$v}{$filename}{error}->{$err};
         }
         $table{$header} = \%rec;
+    }
+
+    foreach my $v (@versions) {
+        my @nodes = keys %{$data->{$v}{$filename}{distribution}};
+        # if TOMCAT_COUNT is not defined, use @nodes count, but that probably
+        # will lead to inaccurate results if no traffic went to any node...
+        my $dist_count = $ENV{TOMCAT_COUNT} || @nodes;
+
+        if (@nodes == 0 || $dist_count <= 1) {
+            next;
+        }
+
+        if (!$ENV{TOMCAT_COUNT}) {
+            warn "The distribution rely on number nodes in data. This may lead to unreliable results. (TOMCAT_COUNT not defined)"
+        }
+
+        my $dist_sum = sum (map { $data->{$v}{$filename}{distribution}{$_} } @nodes);
+
+        my $dist_mean = $dist_sum / $dist_count;
+        my $dist_variance = 0;
+        for (my $i = 0; $i < $dist_count; $i++) {
+            # for nodes missing in the distribution it's 0
+            my $d = 0;
+            if ($i < @nodes) {
+                $d = $data->{$v}{$filename}{distribution}{$nodes[$i]};
+            }
+            $dist_variance += ($d - $dist_mean) ** 2 / ($dist_count - 1);
+        }
+
+        $table{"Distribution mean"}{$v} = sprintf("%.1f", $dist_mean);
+        $table{"Distribution variance"}{$v} = sprintf("%.1f", $dist_variance);
     }
 
     return \%table;
