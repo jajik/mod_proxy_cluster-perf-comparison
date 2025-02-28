@@ -30,7 +30,10 @@ sub parse_record {
                 my ($k, $v) = split /:/, $kv;
                 $db{response}{$k} = $v;
             }
-            last;
+            next;
+        } elsif ($line =~ m/distribution:/) {
+            $curr = \%{$db{distribution}};
+            next;
         }
     
         if (defined $curr) {
