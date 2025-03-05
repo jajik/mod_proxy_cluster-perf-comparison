@@ -127,7 +127,7 @@ run_abtest_for() {
 
     OUTPUT_FOLDER=$(get_output_folder $1)
     c=0
-    # run ab
+    # run tests with client or ab
     for i in $(seq 1 $REPETITIONS)
     do
         echo "Running $i/$REPETITIONS run for $1     ($(date))"
@@ -138,6 +138,7 @@ run_abtest_for() {
             ab -c $CONC_COUNT -n $REQ_COUNT http://localhost:8000/testapp/test.jsp > $OUTPUT_FOLDER/ab-run-$c
         fi
         c=$(expr $c + 1)
+        sleep 10
     done
 
     for p in $(cat $SHUTDOWN_PROCESS_FILE)
