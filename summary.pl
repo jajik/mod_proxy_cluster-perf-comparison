@@ -46,42 +46,47 @@ sub parse_record {
 }
 
 sub create_table {
-    my ($data, $filename) = @_;
+    my ($data) = @_;
 
     my %table;
-    my @versions = keys %$data;
-    my @statuses, my @responses, my @errors;
+    my @files = keys %$data;
+    my @versions, my @statuses, my @responses, my @errors;
 
-    foreach my $v (@versions) {
-        push @statuses, keys %{$data->{$v}{$filename}{status}};
+    foreach my $f (@files) {
+        push @versions, keys %{$data->{$f}};
     }
+    @versions = uniq @versions;
+
+    foreach my $f (@files) {
+        foreach my $v (@versions) {
+            push @statuses, keys %{$data->{$f}{$v}{status}};
+            push @responses, keys %{$data->{$f}{$v}{response}};
+            push @errors, keys %{$data->{$f}{$v}{error}};
+        }
+    }
+
     @statuses = uniq @statuses;
-
-    foreach my $v (@versions) {
-        push @responses, keys %{$data->{$v}{$filename}{response}};
-    }
     @responses = uniq @responses;
-
-    foreach my $v (@versions) {
-        push @errors, keys %{$data->{$v}{$filename}{error}};
-    }
     @errors = uniq @errors;
 
     foreach my $stat (@statuses) {
         my $header = "Status $stat";
         my %rec;
-        foreach my $v (@versions) {
-            $rec{$v} = $data->{$v}{$filename}{status}->{$stat};
+        foreach my $f (@files) {
+            foreach my $v (@versions) {
+                $rec{$f}{$v} = $data->{$f}{$v}{status}->{$stat};
+            }
         }
         $table{$header} = \%rec;
     }
 
     foreach my $resp (@responses) {
         my $header = "Response $resp";
-        # my $maxlen = length $header;
         my %rec;
-        foreach my $v (@versions) {
-            $rec{$v} = $data->{$v}{$filename}{response}->{$resp};
+        foreach my $f (@files) {
+            foreach my $v (@versions) {
+                $rec{$f}{$v} = $data->{$f}{$v}{response}->{$resp};
+            }
         }
         $table{$header} = \%rec;
     }
@@ -89,41 +94,45 @@ sub create_table {
     foreach my $err (@errors) {
         my $header = "Error $err";
         my %rec;
-        foreach my $v (@versions) {
-            $rec{$v} = $data->{$v}{$filename}{error}->{$err};
+        foreach my $f (@files) {
+            foreach my $v (@versions) {
+                $rec{$f}{$v} = $data->{$f}{$v}{error}->{$err};
+            }
         }
         $table{$header} = \%rec;
     }
 
-    foreach my $v (@versions) {
-        my @nodes = keys %{$data->{$v}{$filename}{distribution}};
-        # if TOMCAT_COUNT is not defined, use @nodes count, but that probably
-        # will lead to inaccurate results if no traffic went to any node...
-        my $dist_count = $ENV{TOMCAT_COUNT} || @nodes;
+    foreach my $f (@files) {
+        foreach my $v (@versions) {
+            my @nodes = keys %{$data->{$f}{$v}{distribution}};
+            # if TOMCAT_COUNT is not defined, use @nodes count, but that probably
+            # will lead to inaccurate results if no traffic went to any node...
+            my $dist_count = $ENV{TOMCAT_COUNT} || @nodes;
 
-        if (@nodes == 0 || $dist_count <= 1) {
-            next;
-        }
-
-        if (!$ENV{TOMCAT_COUNT}) {
-            warn "The distribution rely on number nodes in data. This may lead to unreliable results. (TOMCAT_COUNT not defined)"
-        }
-
-        my $dist_sum = sum (map { $data->{$v}{$filename}{distribution}{$_} } @nodes);
-
-        my $dist_mean = $dist_sum / $dist_count;
-        my $dist_variance = 0;
-        for (my $i = 0; $i < $dist_count; $i++) {
-            # for nodes missing in the distribution it's 0
-            my $d = 0;
-            if ($i < @nodes) {
-                $d = $data->{$v}{$filename}{distribution}{$nodes[$i]};
+            if (@nodes == 0 || $dist_count <= 1) {
+                next;
             }
-            $dist_variance += ($d - $dist_mean) ** 2 / ($dist_count - 1);
-        }
 
-        $table{"Distribution mean"}{$v} = sprintf("%.1f", $dist_mean);
-        $table{"Distribution variance"}{$v} = sprintf("%.1f", $dist_variance);
+            if (!$ENV{TOMCAT_COUNT}) {
+                warn "The distribution rely on number nodes in data. This may lead to unreliable results. (TOMCAT_COUNT not defined)"
+            }
+
+            my $dist_sum = sum (map { $data->{$f}{$v}{distribution}{$_} } @nodes);
+
+            my $dist_mean = $dist_sum / $dist_count;
+            my $dist_variance = 0;
+            for (my $i = 0; $i < $dist_count; $i++) {
+                # for nodes missing in the distribution it's 0
+                my $d = 0;
+                if ($i < @nodes) {
+                    $d = $data->{$f}{$v}{distribution}{$nodes[$i]};
+                }
+                $dist_variance += ($d - $dist_mean) ** 2 / ($dist_count - 1);
+            }
+
+            $table{"Distribution mean"}{$f}{$v} = sprintf("%.1f", $dist_mean);
+            $table{"Distribution variance"}{$f}{$v} = sprintf("%.1f", $dist_variance);
+        }
     }
 
     return \%table;
@@ -143,48 +152,60 @@ sub print_table_header {
 }
 
 sub print_table {
-    my $tb = shift;
+    my ($tb, $vs) = @_;
 
     my @header = sort { if ($a =~ m/Status/ && $b =~ m/Status/) { $a cmp $b } else { $b cmp $a } } (keys %$tb);
-    my @versions = sort (keys %{$tb->{$header[0]}});
-    my $vlen = max(map length, @versions);
+    my @files = sort (keys %{$tb->{$header[0]}});
+    my @versions = @$vs;
 
+    my $vlen = max(map length, @versions);
     my $version_padded = 'Version' . (' ' x ($vlen > 7 ? $vlen - 7 : 0));
     $vlen = length $version_padded;
 
-    print_table_header ($version_padded, @header);
+    my $flen = max(map length, @files);
+    my $file_padded = 'Source' . (' ' x ($flen > 6 ? $flen - 6 : 0));
+    $flen = length $file_padded;
 
-    foreach my $v (@versions) {
-        printf "| %${vlen}s ", $v;
-        foreach my $h (@header) {
-            my $len = length $h;
-            printf "| %${len}s ", defined $tb->{$h}{$v} ? $tb->{$h}{$v} : ' ' x $len;
+    print_table_header ($file_padded, $version_padded, @header);
+
+    foreach my $f (@files) {
+        my $displayed_filename = $f;
+        foreach my $v (@versions) {
+
+            printf "| %${flen}s ", $displayed_filename;
+            $displayed_filename = ""; # a little hack, but it improves readability imho
+
+            printf "| %${vlen}s ", $v;
+
+            foreach my $h (@header) {
+                my $len = length $h;
+                printf "| %${len}s ", defined $tb->{$h}{$f}{$v} ? $tb->{$h}{$f}{$v} : ' ' x $len;
+            }
+            say "|";
         }
-        say "|";
+        say "-";
     }
 }
 
 sub print_results {
     my $data = shift;
 
-    my @versions = keys %$data;
     # get all gathered filenames
-    my @files;
-    for my $v (@versions) {
-        @files = (@files, keys %{$data->{$v}});
+    my @files = keys %$data;
+    # get all versions
+    my @versions;
+    for my $f (@files) {
+        push @versions, keys %{$data->{$f}};
     }
-    @files = uniq @files;
+    @versions = uniq @versions;
 
     # go through files and create a table for every single one
-    foreach my $file (sort @files) {
-        say "\n## $file";
-        my $table = create_table $data, $file;
-        if (keys %$table >= 3) {
-            print_table $table;
-        } else {
-            say "Something went wrong while parsing $file";
-        }
-    } 
+    my $table = create_table $data;
+    if (keys %$table >= 3) {
+        print_table $table, \@versions;
+    } else {
+        say "Something went wrong while parsing the data";
+    }
 }
 
 
@@ -197,7 +218,7 @@ foreach my $arg (@ARGV) {
     foreach my $version_dir (@dirs) {
         my @files = glob "$version_dir/client-run*";
         foreach my $f (@files) {
-            $result{basename $version_dir}{basename $f} = parse_record $f;
+            $result{basename $f}{basename $version_dir} = parse_record $f;
         }
     }
 }
