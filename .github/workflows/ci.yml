@@ -30,24 +30,20 @@ jobs:
           - name: "2-tomcats"
             env: |
               TOMCAT_COUNT=2
-              HTTPD_LOG_LEVEL=debug
 
           - name: "2-tomcats-1-shutdown"
             env: |
               TOMCAT_COUNT=2
               SHUTDOWN_RANDOMLY=1
-              HTTPD_LOG_LEVEL=debug
 
           - name: "15-tomcats-15-disable"
             env: |
               TOMCAT_COUNT=15
-              HTTPD_LOG_LEVEL=debug
               DISABLE_RANDOMLY=15
 
           - name: "20-tomcats-15-disable"
             env: |
               TOMCAT_COUNT=20
-              HTTPD_LOG_LEVEL=debug
               DISABLE_RANDOMLY=15
 
           - name: "20-tomcats"
