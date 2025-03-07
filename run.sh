@@ -126,18 +126,20 @@ run_abtest_for() {
     done
 
     OUTPUT_FOLDER=$(get_output_folder $1)
-    c=0
+    PAD=$(expr length "$REPETITIONS")
+
     # run tests with client or ab
     for i in $(seq 1 $REPETITIONS)
     do
         echo "Running $i/$REPETITIONS run for $1     ($(date))"
+        ipadded=$(printf "%0${PAD}d" $i)
+
         # define RUN_WITH_AB to run the previously used `ab` utility; then instead of summary.sh use ab-summary.sh
         if [ -z "$RUN_WITH_AB" ]; then
-            ./client/client localhost:8000/demo-1.0/demo $CONC_COUNT $REQ_COUNT 100 > $OUTPUT_FOLDER/client-run-$c
+            ./client/client localhost:8000/demo-1.0/demo $CONC_COUNT $REQ_COUNT 100 > $OUTPUT_FOLDER/client-run-$ipadded
         else
-            ab -c $CONC_COUNT -n $REQ_COUNT http://localhost:8000/testapp/test.jsp > $OUTPUT_FOLDER/ab-run-$c
+            ab -c $CONC_COUNT -n $REQ_COUNT http://localhost:8000/testapp/test.jsp > $OUTPUT_FOLDER/ab-run-$ipadded
         fi
-        c=$(expr $c + 1)
         sleep 10
     done
 
