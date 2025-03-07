@@ -63,6 +63,7 @@ jobs:
             env: |
               TOMCAT_COUNT=50
               SHUTDOWN_RANDOMLY=30
+              REPETITIONS=75
 
           - name: "50-tomcats-30-disable"
             env: |
