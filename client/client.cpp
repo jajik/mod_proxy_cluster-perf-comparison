@@ -103,9 +103,19 @@ void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness)
     }
 
     // We can't get any cookie in case of an error
-    if (!res || !checkStickiness) return;
+    if (!res) return;
 
     auto val = getJSESSIONID(res.value().headers);
+    if (val) {
+        auto node = getNode(*val);
+        if (node) {
+            stat.nodes[*node]++;
+        }
+    }
+
+    // We don't care about stickiness breaks in some scenarios (e.g. shutdown)
+    if (!checkStickiness) return;
+
     if (!stat.jsessionid) {
         stat.jsessionid = val;
     } else if (val && *stat.jsessionid != *val) {
@@ -114,13 +124,6 @@ void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness)
                   << " but got: " << *val << " (in error " << res << ")" << std::endl;
         // We'll record the stickyness break as an additional error by using Error::Success (TODO: not ideal)
         stat.errors[httplib::Error::Success]++;
-    }
-
-    if (val) {
-        auto node = getNode(*val);
-        if (node) {
-            stat.nodes[*node]++;
-        }
     }
 }
 
