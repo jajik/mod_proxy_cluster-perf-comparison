@@ -70,7 +70,7 @@ jobs:
           - name: "50-tomcats-30-disable"
             env: |
               TOMCAT_COUNT=50
-              DISABLE_RANDOMLY=30
+              DISABLE_RANDOMLY=45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
