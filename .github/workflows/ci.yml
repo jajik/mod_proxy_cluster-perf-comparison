@@ -67,7 +67,7 @@ jobs:
               TOMCAT_COUNT=50
               DISABLE_RANDOMLY=30
 
-          - name: "50-tomcats-30-disable"
+          - name: "50-tomcats-45-disable"
             env: |
               TOMCAT_COUNT=50
               DISABLE_RANDOMLY=45
