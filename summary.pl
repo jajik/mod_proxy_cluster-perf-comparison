@@ -156,7 +156,7 @@ sub print_table {
 
     my @header = sort { if ($a =~ m/Status/ && $b =~ m/Status/) { $a cmp $b } else { $b cmp $a } } (keys %$tb);
     my @files = sort (keys %{$tb->{$header[0]}});
-    my @versions = @$vs;
+    my @versions = sort @$vs;
 
     my $vlen = max(map length, @versions);
     my $version_padded = 'Version' . (' ' x ($vlen > 7 ? $vlen - 7 : 0));
