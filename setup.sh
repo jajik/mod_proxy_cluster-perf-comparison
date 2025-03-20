@@ -26,6 +26,9 @@ do
         echo "Setting log level to $HTTPD_LOG_LEVEL"
         echo "LogLevel $HTTPD_LOG_LEVEL" >> $conf_file
     fi
+    echo "EnableWsTunnel no" >> $conf_file
+
+    sed -i '/WSUpgradeHeader websocket/d' $conf_file
 done
 
 echo -n "Running maven installs... "
