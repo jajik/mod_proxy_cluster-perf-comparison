@@ -27,63 +27,63 @@ jobs:
       matrix:
         include:
 
-          - name: "15-tomcats-15-disable"
+          - name: "15-tomcats-15-disable-1.3.x"
             env: |
               TOMCAT_COUNT=15
               DISABLE_RANDOMLY=15
               HTTPD_IMG=httpd-mod_proxy_cluster-1.3.x
 
-          - name: "20-tomcats-15-disable"
+          - name: "20-tomcats-15-disable-1.3.x"
             env: |
               TOMCAT_COUNT=20
               DISABLE_RANDOMLY=15
               HTTPD_IMG=httpd-mod_proxy_cluster-1.3.x
 
-          - name: "20-tomcats-10-shutdown"
+          - name: "20-tomcats-10-shutdown-1.3.x"
             env: |
               TOMCAT_COUNT=20
               SHUTDOWN_RANDOMLY=10
               HTTPD_IMG=httpd-mod_proxy_cluster-1.3.x
 
-          - name: "50-tomcats-30-shutdown"
+          - name: "50-tomcats-30-shutdown-1.3.x"
             env: |
               TOMCAT_COUNT=50
               SHUTDOWN_RANDOMLY=30
               REPETITIONS=75
               HTTPD_IMG=httpd-mod_proxy_cluster-1.3.x
 
-          - name: "50-tomcats-30-disable"
+          - name: "50-tomcats-30-disable-1.3.x"
             env: |
               TOMCAT_COUNT=50
               DISABLE_RANDOMLY=30
               HTTPD_IMG=httpd-mod_proxy_cluster-1.3.x
 
-          - name: "15-tomcats-15-disable"
+          - name: "15-tomcats-15-disable-2.x"
             env: |
               TOMCAT_COUNT=15
               DISABLE_RANDOMLY=15
               HTTPD_IMG=httpd-mod_proxy_cluster-2.x
 
-          - name: "20-tomcats-15-disable"
+          - name: "20-tomcats-15-disable-2.x"
             env: |
               TOMCAT_COUNT=20
               DISABLE_RANDOMLY=15
               HTTPD_IMG=httpd-mod_proxy_cluster-2.x
 
-          - name: "20-tomcats-10-shutdown"
+          - name: "20-tomcats-10-shutdown-2.x"
             env: |
               TOMCAT_COUNT=20
               SHUTDOWN_RANDOMLY=10
               HTTPD_IMG=httpd-mod_proxy_cluster-2.x
 
-          - name: "50-tomcats-30-shutdown"
+          - name: "50-tomcats-30-shutdown-2.x"
             env: |
               TOMCAT_COUNT=50
               SHUTDOWN_RANDOMLY=30
               REPETITIONS=75
               HTTPD_IMG=httpd-mod_proxy_cluster-2.x
 
-          - name: "50-tomcats-30-disable"
+          - name: "50-tomcats-30-disable-2.x"
             env: |
               TOMCAT_COUNT=50
               DISABLE_RANDOMLY=30
