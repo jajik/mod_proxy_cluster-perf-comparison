@@ -1,13 +1,13 @@
 #!/usr/bin/sh
 
-HTTPD_IMG_1_3=${HTTPD_IMG_1_3:-httpd-mod_proxy_cluster-1.3.x}
-HTTPD_IMG_2_0=${HTTPD_IMG_2_0:-httpd-mod_proxy_cluster-2.x}
+# HTTPD_IMG_1_3=${HTTPD_IMG_1_3:-httpd-mod_proxy_cluster-1.3.x}
+# HTTPD_IMG_2_0=${HTTPD_IMG_2_0:-httpd-mod_proxy_cluster-2.x}
 IMG=${IMG:-mod_proxy_cluster-testsuite-tomcat}
 
 TOMCAT_COUNT=${TOMCAT_COUNT:-2}
 CONC_COUNT=${CONC_COUNT:-100}
 REQ_COUNT=${REQ_COUNT:-1000}
-REPETITIONS=${REPETITIONS:-90}
+REPETITIONS=${REPETITIONS:-180}
 SHUTDOWN_RANDOMLY=${SHUTDOWN_RANDOMLY:-0}
 DISABLE_RANDOMLY=${DISABLE_RANDOMLY:-0}
 
@@ -177,6 +177,5 @@ httpd_remove
 mkdir -p output/1.3/
 mkdir -p output/2.0/
 
-run_abtest_for $HTTPD_IMG_2_0
-run_abtest_for $HTTPD_IMG_1_3
+run_abtest_for $HTTPD_IMG
 
