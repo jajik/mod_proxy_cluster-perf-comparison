@@ -18,7 +18,10 @@ echo " Done"
 # Increase MaxNode to 50
 for conf_file in mod_proxy_cluster/test/httpd/mod_proxy_cluster.conf mod_cluster-1.3.x/test/httpd/mod_proxy_cluster.conf
 do
-    echo "Maxnode 50"          >> $conf_file
+    echo "CacheShareFor 60"    >> $conf_file
+    echo "Maxhost 150"         >> $conf_file
+    echo "Maxcontext 100"      >> $conf_file
+    echo "Maxnode 100"         >> $conf_file
     echo "ServerLimit 32"      >> $conf_file
     echo "StartServers 8"      >> $conf_file
     echo "MaxKeepAliveRequests 0" >> $conf_file
