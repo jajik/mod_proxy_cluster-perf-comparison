@@ -2,7 +2,7 @@ FROM fedora:41 AS builder
 
 RUN yum install cmake gcc g++ wget apr-devel apr-util-devel openssl-devel pcre-devel redhat-rpm-config wcstools autoconf -y
 
-ARG HTTPD_SOURCES="https://dlcdn.apache.org/httpd/httpd-2.4.63.tar.gz"
+ARG HTTPD_SOURCES="https://dlcdn.apache.org/httpd/httpd-2.4.64.tar.gz"
 
 ENV CONF=httpd/mod_proxy_cluster.conf
 ENV HTTPD=${HTTPD_SOURCES}
