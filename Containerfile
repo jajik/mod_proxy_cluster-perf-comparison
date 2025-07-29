@@ -20,8 +20,7 @@ RUN ./configure --enable-proxy \
                 --enable-proxy-http \
                 --enable-proxy-ajp \
                 --enable-proxy-wstunnel \
-                --enable-proxy-hcheck \
-                --with-port=8000
+                --enable-proxy-hcheck
 RUN make
 RUN make install
 

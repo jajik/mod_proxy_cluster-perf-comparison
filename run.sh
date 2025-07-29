@@ -73,10 +73,10 @@ disable_tomcats_randomly() {
         i=$(expr $rn % $TOMCAT_COUNT + 1)
         seed=$(random_number 2)
         echo "Sending DISABLE-APP to tomcat$i"
-        curl -s -o /dev/null -i -XDISABLE-APP -d "JVMRoute=tomcat$i" http://localhost:6666/*
+        curl -s -o /dev/null -i -XDISABLE-APP -d "JVMRoute=tomcat$i" http://localhost:8090/*
         sleep $(expr 20 + $seed)
         echo "Sending ENABLE-APP to tomcat$i"
-        curl -s -o /dev/null -i -XENABLE-APP -d "JVMRoute=tomcat$i" http://localhost:6666/*
+        curl -s -o /dev/null -i -XENABLE-APP -d "JVMRoute=tomcat$i" http://localhost:8090/*
         sleep $seed
     done
 }
@@ -136,9 +136,9 @@ run_abtest_for() {
 
         # define RUN_WITH_AB to run the previously used `ab` utility; then instead of summary.sh use ab-summary.sh
         if [ -z "$RUN_WITH_AB" ]; then
-            ./client/client localhost:8000/demo-1.0/demo $CONC_COUNT $REQ_COUNT 100 > $OUTPUT_FOLDER/client-run-$ipadded
+            ./client/client localhost:8090/demo-1.0/demo $CONC_COUNT $REQ_COUNT 100 > $OUTPUT_FOLDER/client-run-$ipadded
         else
-            ab -c $CONC_COUNT -n $REQ_COUNT http://localhost:8000/testapp/test.jsp > $OUTPUT_FOLDER/ab-run-$ipadded
+            ab -c $CONC_COUNT -n $REQ_COUNT http://localhost:8090/testapp/test.jsp > $OUTPUT_FOLDER/ab-run-$ipadded
         fi
         sleep 10
     done
