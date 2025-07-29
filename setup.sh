@@ -67,7 +67,7 @@ docker build -t $HTTPD_IMG_1_3 -f httpd/Containerfile httpd/
 cd ../..
 
 cd client
-CXX=g++ cmake . && make
+cmake . && make
 if [ $? -ne 0 ]; then
     echo "client compilation failed"
     exit 1
