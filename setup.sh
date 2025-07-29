@@ -43,12 +43,16 @@ done
 echo "Done"
 
 echo -n "Creating httpd and tomcat images..."
+# First we'll change the default tomcat port from 8080 to 9000 so that we avoid conflicts
+# with the mod_proxy_cluster's port 8090 in case of 10 or more tomcat containers...
+sed -i -e 's/8080/9000/g' mod_proxy_cluster/test/includes/common.sh
+sed -i -e 's/8080/9000/g' mod_proxy_cluster/test/tomcat/server.xml
+
 # tomcat and httpd with mod_proxy_cluster 2.x
 cd mod_proxy_cluster/test/
 # load helper functions
 . includes/common.sh
 # tomcat
-# cp ../../server.xml tomcat/
 tomcat_create
 rm -rf httpd/mod_proxy_cluster /tmp/mod_proxy_cluster
 mkdir /tmp/mod_proxy_cluster
