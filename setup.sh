@@ -54,11 +54,20 @@ cd mod_proxy_cluster/test/
 . includes/common.sh
 # tomcat
 tomcat_create
+if [ $? -ne 0 ]; then
+    echo "Error occurred during tomcat image creation"
+    exit 1
+fi
+
 rm -rf httpd/mod_proxy_cluster /tmp/mod_proxy_cluster
 mkdir /tmp/mod_proxy_cluster
 cp -r ../native ../test /tmp/mod_proxy_cluster/
 mv /tmp/mod_proxy_cluster httpd/
 docker build -t $HTTPD_IMG_2_0 -f httpd/Containerfile httpd/
+if [ $? -ne 0 ]; then
+    echo "Error occurred during $HTTPD_IMG_2_0 creation"
+    exit 1
+fi
 
 # httpd with mod_proxy_cluster 1.3.x
 cd ../..
@@ -68,6 +77,10 @@ mkdir /tmp/mod_proxy_cluster/
 cp -r ../native ../test /tmp/mod_proxy_cluster
 cp -r /tmp/mod_proxy_cluster httpd/
 docker build -t $HTTPD_IMG_1_3 -f httpd/Containerfile httpd/
+if [ $? -ne 0 ]; then
+    echo "Error occurred during $HTTPD_IMG_1_3 creation"
+    exit 1
+fi
 cd ../..
 
 cd client
