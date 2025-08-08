@@ -64,7 +64,7 @@ mkdir /tmp/mod_proxy_cluster
 cp -r ../native ../test /tmp/mod_proxy_cluster/
 mv /tmp/mod_proxy_cluster httpd/
 # a hack needed because of broken apr installation on Fedora 42
-sed -i -e 's:(ENV HTTPD=${HTTPD_SOURCES}):\1\nENV PATH=/usr/bin:$PATH:' httpd/Containerfile
+sed -i -e 's|\(ENV HTTPD=${HTTPD_SOURCES}\)|\1\nENV PATH=/usr/bin:$PATH|' httpd/Containerfile
 
 docker build -t $HTTPD_IMG_2_0 -f httpd/Containerfile httpd/
 if [ $? -ne 0 ]; then
