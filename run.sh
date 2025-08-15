@@ -1,8 +1,6 @@
 #!/usr/bin/sh
 
-HTTPD_IMG_1_3=${HTTPD_IMG_1_3:-httpd-mod_proxy_cluster-1.3.x}
-HTTPD_IMG_2_0=${HTTPD_IMG_2_0:-httpd-mod_proxy_cluster-2.x}
-IMG=${IMG:-mod_proxy_cluster-testsuite-tomcat}
+IMG=${IMG:-mpc-perfsuite-tomcat}
 
 TOMCAT_COUNT=${TOMCAT_COUNT:-2}
 CONC_COUNT=${CONC_COUNT:-100}
@@ -24,12 +22,24 @@ echo "                  DISABLE_RANDOMLY=${DISABLE_RANDOMLY}"
 
 . mod_proxy_cluster/test/includes/common.sh
 
-get_output_folder() {
-    if [ "$1" = $HTTPD_IMG_1_3 ]; then
-        echo "output/1.3/"
-    else
-        echo "output/2.0/"
+
+get_version_from_image() {
+    if [ -z "$1" ]; then
+        echo "get_version_from_image got no argument"
+        exit 1
     fi
+
+    echo $1 | sed -rn 's|mpc-perfsuite-mod_proxy_cluster-(.*)|\1|p'
+}
+
+get_output_folder() {
+    if [ -z "$1" ]; then
+        echo "get_output_folder got no argument"
+        exit 1
+    fi
+
+    version=$(get_version_from_image $1)
+    echo "output/$version/"
 }
 
 tomcat_upload_contexts() {
@@ -126,6 +136,7 @@ run_abtest_for() {
     done
 
     OUTPUT_FOLDER=$(get_output_folder $1)
+    mkdir -p $OUTPUT_FOLDER
     PAD=$(expr length "$REPETITIONS")
 
     # run tests with client or ab
@@ -174,9 +185,8 @@ run_abtest_for() {
 tomcat_all_remove
 httpd_remove
 
-mkdir -p output/1.3/
-mkdir -p output/2.0/
-
-run_abtest_for $HTTPD_IMG_2_0
-run_abtest_for $HTTPD_IMG_1_3
+for image in $(docker image ls --filter 'label=perfsuite-mod_proxy_cluster' --format {{.Repository}})
+do
+    run_abtest_for $image
+done
 
