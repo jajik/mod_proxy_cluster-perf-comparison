@@ -1,8 +1,5 @@
 FROM fedora:42 AS builder
 
-# hack for Fedora 42: we need to ensure that /usr/bin is searched before /usr/sbin for apr-1-config
-ENV PATH="/usr/bin:$PATH"
-
 RUN dnf install cmake gcc g++ wget apr-devel apr-util apr-util-devel openssl-devel pcre-devel redhat-rpm-config wcstools autoconf -y
 
 ARG HTTPD_SOURCES="https://dlcdn.apache.org/httpd/httpd-2.4.65.tar.gz"
