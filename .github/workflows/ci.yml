@@ -92,7 +92,7 @@ jobs:
       - name: Setup  performance tests
         run: sh setup.sh
       - name: Run performance tests
-        run: sh run.sh
+        run: sh run-suite.sh
       - name: Make a summary of test runs
         run: |
           perl summary.pl output/ | tee summary && cp summary output/summary-for-${{ matrix.name }}
