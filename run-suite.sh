@@ -91,9 +91,9 @@ disable_tomcats_randomly() {
     done
 }
 
-run_abtest_for() {
+run_tests_with() {
     if [ -z "$1" ]; then
-        echo "run_abtest_for requires httpd container name"
+        echo "run_tests_with requires httpd container name"
         exit 1
     fi
     # start httpd
@@ -140,9 +140,10 @@ run_abtest_for() {
     PAD=$(expr length "$REPETITIONS")
 
     # run tests with client or ab
+    version=$(get_version_from_image $i)
     for i in $(seq 1 $REPETITIONS)
     do
-        echo "Running $i/$REPETITIONS run for $1     ($(date))"
+        echo "Running $i/$REPETITIONS run for $version     ($(date))"
         ipadded=$(printf "%0${PAD}d" $i)
 
         # define RUN_WITH_AB to run the previously used `ab` utility; then instead of summary.sh use ab-summary.sh
@@ -187,6 +188,6 @@ httpd_remove
 
 for image in $(docker image ls --filter 'label=perfsuite-mod_proxy_cluster' --format {{.Repository}})
 do
-    run_abtest_for $image
+    run_tests_with $image
 done
 
