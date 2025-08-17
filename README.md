@@ -23,6 +23,15 @@ followed by a version (e.g. `mod_proxy_cluster-testing` will show up as `testing
 Keep the structure the same as is in the already existing folders (mainly a `native/` subdirectory
 with a `cmake` for an easy compilation).
 
+### Running the suite in GitHub Actions
+
+The repository has a pipeline setup for execution on pull requests and pushes, so you'll get some
+idea everytime a push happens.
+
+To ease basic testing there's an additional workflow that can be triggered manually from the GitHub
+interface without any code change. You can even provide additional mod\_proxy\_cluster sources
+to test. See the `Manual` workflow in the `Actions` tab.
+
 ### Tools needed
 
 * filename
