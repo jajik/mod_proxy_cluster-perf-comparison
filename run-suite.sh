@@ -140,7 +140,7 @@ run_tests_with() {
     PAD=$(expr length "$REPETITIONS")
 
     # run tests with client or ab
-    version=$(get_version_from_image $i)
+    version=$(get_version_from_image $1)
     for i in $(seq 1 $REPETITIONS)
     do
         echo "Running $i/$REPETITIONS run for $version     ($(date))"
