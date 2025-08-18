@@ -1,7 +1,16 @@
+# Looks like unnecessary, but this is used in the list of defined workflows, so if unspecified,
+# the name of the whole workflow (not an individual run) would be `.github/workflows/manual.yml`
 name: Manual
+# We'll use `Manual` if inputs.note is not defined, otherwise, we'll add the note into parentheses
+run-name: ${{ inputs.note && format('Manual ({0})', inputs.note) || format('Manual') }}
+
 on:
   workflow_dispatch:
     inputs:
+
+      note:
+        description: "Note to be displayed alongside the workflow run name"
+        type: string
 
       additional-sources:
         description: "A list of URLs, separated by commas, to obtain zip distributions of additional mod_proxy_cluster sources"
@@ -64,9 +73,6 @@ jobs:
 
       - name: Checkout submodules
         run: git submodule update --init --recursive
-
-      - name: Set environment variables
-        run: echo "${{ matrix.env }}" >> $GITHUB_ENV
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
