@@ -9,6 +9,7 @@ on:
       - '**.md'
       - 'LICENSE'
       - '.github/dependabot.yml'
+      - '.github/workflows/manual.yml'
 
   pull_request:
     branches:
@@ -18,6 +19,7 @@ on:
       - '**.md'
       - 'LICENSE'
       - '.github/dependabot.yml'
+      - '.github/workflows/manual.yml'
 
 jobs:
 
