@@ -90,6 +90,13 @@ jobs:
         run: |
             for source in $(echo ${{ inputs.additional-sources }} | sed 's|,|\n|g'); do
                 wget $source && unzip $(filename $source)
+                # rename the source if necessary (e.g. in case of the old repository)
+                file=$(filename $source)
+                version=${file%.*}
+                # if the correct directory exists already, we don't rename
+                if [ ! -d mod_proxy_cluster-$version/ ]; then
+                    mv *-$version/ mod_proxy_cluster-$version/
+                fi
             done
 
       - name: Setup  performance tests
