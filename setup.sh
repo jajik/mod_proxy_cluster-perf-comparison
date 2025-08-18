@@ -76,7 +76,8 @@ for dir in mod_proxy_cluster*/
 do
     cp -r $dir/native .tempdir/
     cd .tempdir
-    version=$(echo $dir | sed -rn 's|mod_proxy_cluster-(.*)/|\1|p')
+    # \L makes sure the version is lowercase – docker requirement
+    version=$(echo $dir | sed -rn 's|mod_proxy_cluster-(.*)/|\L\1|p')
     # if version is empty, it's our `mod_proxy_cluster` == 2.x version
     version=${version:-2.x}
     containername="mpc-perfsuite-mod_proxy_cluster-$version"
