@@ -186,8 +186,17 @@ run_tests_with() {
 tomcat_all_remove
 httpd_remove
 
+res=0
+
 for image in $(docker image ls --filter 'label=perfsuite-mod_proxy_cluster' --format {{.Repository}})
 do
-    run_tests_with $image
+    (run_tests_with $image)
+    if [ $? -ne 0 ]; then
+        docker logs $MPC_NAME > output/$image.log 2>&1
+        echo "Running tests for $image failed. Check out output/$image.log, it may contain more details"
+        res=$(expr $res + 1)
+    fi
 done
+
+exit $res
 
