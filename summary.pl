@@ -154,7 +154,12 @@ sub print_table_header {
 sub print_table {
     my ($tb, $vs) = @_;
 
-    my @header = sort { if ($a =~ m/Status/ && $b =~ m/Status/) { $a cmp $b } else { $b cmp $a } } (keys %$tb);
+    my @header = sort {
+                        if ($a =~ m/Status/ && $b =~ m/Status/) { $a cmp $b }
+                        elsif ($a =~ m/Response median/ && $b =~ m/Response/) { 1 }
+                        elsif ($a =~ m/Response/ && $b =~ m/Response median/) { -1 }
+                        else { $b cmp $a }
+                      } (keys %$tb);
     my @files = sort (keys %{$tb->{$header[0]}});
     my @versions = sort @$vs;
 
