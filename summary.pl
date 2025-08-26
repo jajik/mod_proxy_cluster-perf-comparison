@@ -211,6 +211,9 @@ sub print_results {
 
 my %result;
 
+
+die "No directory given" if @ARGV < 1;
+
 # Process all given directories
 foreach my $arg (@ARGV) {
     say "for $arg\n------------------";
