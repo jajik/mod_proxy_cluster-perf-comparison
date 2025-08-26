@@ -50,12 +50,13 @@ struct Stat {
     using RespTimes = std::tuple< std::chrono::milliseconds /* average */
                                 , std::chrono::milliseconds /* min */
                                 , std::chrono::milliseconds /* max */
+                                , std::chrono::milliseconds /* median */
                                 >;
     using Errors = std::map< httplib::Error, int >;
 
     RespStats responseStatuses;
     Errors errors;
-    RespTimes times = { 0ms, 0ms, 0ms };
+    RespTimes times = { 0ms, 0ms, 0ms, 0ms };
 
     std::optional< std::string > jsessionid;
     std::map< std::string, int > nodes;
@@ -154,6 +155,7 @@ Stat merge(const Stat& s1, const Stat& s2) {
     res.times = { (std::get<0>(s1.times) + std::get<0>(s2.times)) / 2
                 , std::get<1>(s1.times) > std::get<1>(s2.times) ? std::get<1>(s2.times) : std::get<1>(s1.times)
                 , std::get<2>(s1.times) > std::get<2>(s2.times) ? std::get<2>(s1.times) : std::get<2>(s2.times)
+                , (std::get<3>(s1.times) + std::get<3>(s2.times)) / 2
                 };
 
     return res;
@@ -164,7 +166,7 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
     httplib::Client client(conf.host);
     client.set_keep_alive(conf.keepAlive);
 
-    std::chrono::milliseconds min = 0ms, max = 0ms, avg = 0ms, tmp = 0ms;
+    std::vector< std::chrono::milliseconds > times;
     std::string cookie;
 
     latch.count_down();
@@ -181,15 +183,17 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
         processResult(res, stat, conf.checkStickiness);
         const auto end{std::chrono::steady_clock::now()};
 
-        tmp = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-        min = min > tmp ? tmp : min;
-        max = tmp > max ? tmp : max;
-        avg += tmp;
-
+        times.push_back( std::chrono::duration_cast<std::chrono::milliseconds>(end - start) );
         std::this_thread::sleep_for(std::chrono::milliseconds(conf.delay));
     }
 
-    stat.times = { avg / conf.reqCount, min, max };
+    std::sort(times.begin(), times.end());
+    std::chrono::milliseconds average = std::accumulate(times.begin(), times.end(), 0ms) / times.size();
+    std::chrono::milliseconds median  = times.size() % 2 == 0
+                                      ? times[times.size() / 2]
+                                      : (times[times.size() / 2] + times[(times.size() + 1) / 2]) / 2;
+
+    stat.times = { average, times.front(), times.back(), median };
 
     promise.set_value(stat);
     client.stop();
@@ -265,7 +269,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::cout << "avg: " << std::get<0>(result.times) << " min: " << std::get<1>(result.times)
-              << " max: " << std::get<2>(result.times) << std::endl;
+              << " max: " << std::get<2>(result.times) << " median: " << std::get<3>(result.times) << std::endl;
 
     return result.errors.size();
 }
