@@ -56,6 +56,11 @@ on:
         # use just a subset
         options: [ "error", "notice", "info", "debug", "trace3", "trace8" ]
 
+      branch:
+        description: "branch to checkout instead of master (default)"
+        default: "master"
+        type: string
+
 jobs:
 
   manual-run:
@@ -70,6 +75,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
 
       - name: Checkout submodules
         run: git submodule update --init --recursive
