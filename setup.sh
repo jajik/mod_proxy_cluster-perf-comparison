@@ -14,7 +14,7 @@ echo "Setting up dependencies"
 #############################
 # Maven installs for the applications used there
 echo -n "Running maven installs... "
-for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ mod_proxy_cluster/test/  demo-webapp/
+for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ demo-webapp/
 do
     cd $m
     mvn install
@@ -34,6 +34,7 @@ echo -n "Creating httpd and tomcat images... "
 # First we'll change the default tomcat port from 8080 to 9000 so that we avoid conflicts
 # with the mod_proxy_cluster's port 8090 in case of 10 or more tomcat containers...
 cd mod_proxy_cluster/test/
+sh setup-dependencies.sh
 sed -i -e 's/8080/9000/g' includes/common.sh
 sed -i -e 's/8080/9000/g' tomcat/server.xml
 # load helper functions
