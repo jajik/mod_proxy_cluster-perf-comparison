@@ -14,7 +14,7 @@ echo "Setting up dependencies"
 #############################
 # Maven installs for the applications used there
 echo -n "Running maven installs... "
-for m in httpd_websocket-testsuite/ mod_cluster-testsuite/ demo-webapp/
+for m in ci.modcluster.io/websocket-hello/ mod_cluster-testsuite/ demo-webapp/
 do
     cd $m
     mvn install
