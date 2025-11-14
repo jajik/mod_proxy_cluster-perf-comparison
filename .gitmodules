@@ -1,9 +1,6 @@
 [submodule "mod_proxy_cluster"]
 	path = mod_proxy_cluster
 	url = https://github.com/modcluster/mod_proxy_cluster
-[submodule "httpd_websocket-testsuite"]
-	path = httpd_websocket-testsuite
-	url = https://github.com/jfclere/httpd_websocket
 [submodule "mod_cluster-testsuite"]
 	path = mod_cluster-testsuite
 	url = https://github.com/modcluster/mod_cluster
