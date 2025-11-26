@@ -2,6 +2,8 @@
 
 # we'll build the tomcat image under our own name
 export IMG=${IMG:-mpc-perfsuite-tomcat}
+export PORT=${PORT:-9000}
+export MPC_NAME=${MPC_NAME:-httpd-mpc-perfsuite}
 
 echo "Setting up dependencies"
 
@@ -35,8 +37,7 @@ echo -n "Creating httpd and tomcat images... "
 # with the mod_proxy_cluster's port 8090 in case of 10 or more tomcat containers...
 cd mod_proxy_cluster/test/
 sh setup-dependencies.sh
-sed -i -e 's/8080/9000/g' includes/common.sh
-sed -i -e 's/8080/9000/g' tomcat/server.xml
+cp $OLDPWD/mod_cluster-testsuite/dist/target/*.zip tomcat/target/
 # load helper functions
 . includes/common.sh
 tomcat_create
