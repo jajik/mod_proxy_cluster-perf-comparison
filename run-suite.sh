@@ -1,6 +1,8 @@
 #!/usr/bin/sh
 
 IMG=${IMG:-mpc-perfsuite-tomcat}
+PORT=${PORT:-9000}
+MPC_NAME=${MPC_NAME:-httpd-mpc-perfsuite}
 
 TOMCAT_COUNT=${TOMCAT_COUNT:-2}
 CONC_COUNT=${CONC_COUNT:-100}
@@ -96,6 +98,8 @@ run_tests_with() {
         echo "run_tests_with requires httpd container name"
         exit 1
     fi
+
+    echo "Running tests with $1"
     # start httpd
     HTTPD_IMG=$1 httpd_start
 
@@ -177,8 +181,8 @@ run_tests_with() {
     sleep 1
 
     # first preserve the error_log
-    docker cp httpd-mod_proxy_cluster:/usr/local/apache2/logs/error_log $OUTPUT_FOLDER/error_log
-    docker cp httpd-mod_proxy_cluster:/usr/local/apache2/logs/access_log $OUTPUT_FOLDER/access_log
+    docker cp ${MPC_NAME}:/usr/local/apache2/logs/error_log $OUTPUT_FOLDER/error_log
+    docker cp ${MPC_NAME}:/usr/local/apache2/logs/access_log $OUTPUT_FOLDER/access_log
     # and now we can remove it
     HTTPD_IMG=$1 httpd_remove
 }
