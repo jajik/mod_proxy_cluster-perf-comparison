@@ -51,12 +51,13 @@ struct Stat {
                                 , std::chrono::milliseconds /* min */
                                 , std::chrono::milliseconds /* max */
                                 , std::chrono::milliseconds /* median */
+                                , std::chrono::milliseconds /* p90 */
                                 >;
     using Errors = std::map< httplib::Error, int >;
 
     RespStats responseStatuses;
     Errors errors;
-    RespTimes times = { 0ms, 0ms, 0ms, 0ms };
+    RespTimes times = { 0ms, 0ms, 0ms, 0ms, 0ms };
 
     std::optional< std::string > jsessionid;
     std::map< std::string, int > nodes;
@@ -156,6 +157,7 @@ Stat merge(const Stat& s1, const Stat& s2) {
                 , std::get<1>(s1.times) > std::get<1>(s2.times) ? std::get<1>(s2.times) : std::get<1>(s1.times)
                 , std::get<2>(s1.times) > std::get<2>(s2.times) ? std::get<2>(s1.times) : std::get<2>(s2.times)
                 , (std::get<3>(s1.times) + std::get<3>(s2.times)) / 2
+                , std::max(std::get<4>(s1.times), std::get<4>(s2.times))
                 };
 
     return res;
@@ -192,8 +194,10 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
     std::chrono::milliseconds median  = times.size() % 2 == 0
                                       ? times[times.size() / 2]
                                       : (times[times.size() / 2] + times[(times.size() + 1) / 2]) / 2;
+    // this is probably good enough
+    std::chrono::milliseconds p90 = times[times.size() / 10 * 9];
 
-    stat.times = { average, times.front(), times.back(), median };
+    stat.times = { average, times.front(), times.back(), median, p90 };
 
     promise.set_value(stat);
     client.stop();
@@ -268,8 +272,12 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    std::cout << "avg: " << std::get<0>(result.times) << " min: " << std::get<1>(result.times)
-              << " max: " << std::get<2>(result.times) << " median: " << std::get<3>(result.times) << std::endl;
+    std::cout << "avg: " << std::get<0>(result.times)
+              << " min: " << std::get<1>(result.times)
+              << " max: " << std::get<2>(result.times)
+              << " median: " << std::get<3>(result.times)
+              << " p90-max: " << std::get<4>(result.times)
+              << std::endl;
 
     return result.errors.size();
 }
