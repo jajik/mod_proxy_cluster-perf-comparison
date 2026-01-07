@@ -156,6 +156,8 @@ sub print_table {
 
     my @header = sort {
                         if ($a =~ m/Status/ && $b =~ m/Status/) { $a cmp $b }
+                        elsif ($a =~ m/Response p90/ && $b =~ m/Response/) { 1 }
+                        elsif ($a =~ m/Response/ && $b =~ m/Response p90/) { -1 }
                         elsif ($a =~ m/Response median/ && $b =~ m/Response/) { 1 }
                         elsif ($a =~ m/Response/ && $b =~ m/Response median/) { -1 }
                         else { $b cmp $a }
