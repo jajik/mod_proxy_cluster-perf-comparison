@@ -8,7 +8,6 @@
 #include <map>
 #include <latch>
 #include <future>
-#include <tuple>
 
 using namespace std::literals::chrono_literals;
 
@@ -126,38 +125,36 @@ void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness)
     }
 }
 
-Stat merge(const Stat& s1, const Stat& s2) {
+Stat merge(const std::vector<Stat>& stats) {
     Stat res;
+    std::vector<std::chrono::milliseconds> medians;
 
-    for (const auto& [k, v] : s1.responseStatuses) {
-        res.responseStatuses[k] = v;
+    for (const auto& s : stats) {
+        for (const auto& [k, v] : s.responseStatuses) {
+            res.responseStatuses[k] = v;
+        }
+
+        for (const auto& [k, v] : s.errors) {
+            res.errors[k] = v;
+        }
+
+        for (const auto& [node, count] : s.nodes) {
+            res.nodes[node] = count;
+        }
+
+        res.average += s.average;
+        res.min = std::min(res.min, s.min);
+        res.max = std::max(res.max, s.max);
+        res.p90 = std::max(res.p90, s.p90);
+
+        medians.push_back(s.median);
     }
 
-    for (const auto& [k, v] : s2.responseStatuses) {
-        res.responseStatuses[k] += v;
-    }
-
-    for (const auto& [k, v] : s1.errors) {
-        res.errors[k] = v;
-    }
-    for (const auto& [k, v] : s2.errors) {
-        res.errors[k] += v;
-    }
-
-    for (const auto& [node, count] : s1.nodes) {
-        res.nodes[node] = count;
-    }
-
-    for (const auto& [node, count] : s2.nodes) {
-        res.nodes[node] += count;
-    }
-
-    /* not ideal */
-    res.average = (s1.average + s2.average) / 2;
-    res.min = std::min(s1.min, s2.min);
-    res.max = std::max(s1.max, s2.max);
-    res.median = (s1.median + s2.median) / 2;
-    res.p90 = std::max(s1.p90, s2.p90);
+    std::sort(medians.begin(), medians.end());
+    res.median = medians.size() % 2 == 0
+                ? medians[medians.size() / 2]
+                : (medians[medians.size() / 2] + medians[(medians.size() + 1) / 2]) / 2;
+    res.average = res.average / stats.size();
 
     return res;
 }
@@ -248,10 +245,12 @@ int main(int argc, char* argv[]) {
         clients.emplace_back(execute, std::move(promise), conf, std::ref(latch));
     }
 
-    Stat result;
-    for (auto& s : results) {
-        result = merge(result, s.get());
+    std::vector<Stat> stats;
+    for (auto& sf : results) {
+        stats.push_back(sf.get());
     }
+
+    Stat result = merge(stats);
 
     for (int i = 0; i < conf.clientCount; i++) {
         clients[i].join();
