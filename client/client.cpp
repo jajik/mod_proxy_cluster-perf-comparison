@@ -47,17 +47,17 @@ struct Config {
 
 struct Stat {
     using RespStats = std::map<int, size_t>;
-    using RespTimes = std::tuple< std::chrono::milliseconds /* average */
-                                , std::chrono::milliseconds /* min */
-                                , std::chrono::milliseconds /* max */
-                                , std::chrono::milliseconds /* median */
-                                , std::chrono::milliseconds /* p90 */
-                                >;
     using Errors = std::map< httplib::Error, int >;
 
     RespStats responseStatuses;
     Errors errors;
-    RespTimes times = { 0ms, 0ms, 0ms, 0ms, 0ms };
+
+    std::chrono::milliseconds average = 0ms;
+    std::chrono::milliseconds min = 0ms;
+    std::chrono::milliseconds max = 0ms;
+    std::chrono::milliseconds median = 0ms;
+    std::chrono::milliseconds p90 = 0ms;
+
 
     std::optional< std::string > jsessionid;
     std::map< std::string, int > nodes;
@@ -153,12 +153,11 @@ Stat merge(const Stat& s1, const Stat& s2) {
     }
 
     /* not ideal */
-    res.times = { (std::get<0>(s1.times) + std::get<0>(s2.times)) / 2
-                , std::get<1>(s1.times) > std::get<1>(s2.times) ? std::get<1>(s2.times) : std::get<1>(s1.times)
-                , std::get<2>(s1.times) > std::get<2>(s2.times) ? std::get<2>(s1.times) : std::get<2>(s2.times)
-                , (std::get<3>(s1.times) + std::get<3>(s2.times)) / 2
-                , std::max(std::get<4>(s1.times), std::get<4>(s2.times))
-                };
+    res.average = (s1.average + s2.average) / 2;
+    res.min = std::min(s1.min, s2.min);
+    res.max = std::max(s1.max, s2.max);
+    res.median = (s1.median + s2.median) / 2;
+    res.p90 = std::max(s1.p90, s2.p90);
 
     return res;
 }
@@ -197,7 +196,11 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
     // this is probably good enough
     std::chrono::milliseconds p90 = times[times.size() / 10 * 9];
 
-    stat.times = { average, times.front(), times.back(), median, p90 };
+    stat.average = average;
+    stat.min = times.front();
+    stat.max = times.back();
+    stat.median = median;
+    stat.p90 = p90;
 
     promise.set_value(stat);
     client.stop();
@@ -272,11 +275,11 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    std::cout << "avg: " << std::get<0>(result.times)
-              << " min: " << std::get<1>(result.times)
-              << " max: " << std::get<2>(result.times)
-              << " median: " << std::get<3>(result.times)
-              << " p90-max: " << std::get<4>(result.times)
+    std::cout << "avg: " << result.average
+              << " min: " << result.min
+              << " max: " << result.max
+              << " median: " << result.median
+              << " p90-max: " << result.p90
               << std::endl;
 
     return result.errors.size();
