@@ -98,6 +98,9 @@ jobs:
       - name: Make a summary of test runs
         run: |
           perl summary.pl output/ | tee summary && cp summary output/summary-for-${{ matrix.name }}
+      - name: Check Status 200
+        run: |
+          if [ $(grep -c "Status 200" summary) -eq 0 ]; then exit 1; fi
       - name: Preserve output
         uses: actions/upload-artifact@v4
         if: always()
