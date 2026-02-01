@@ -26,10 +26,11 @@ jobs:
     # This will cause the job being skipped on PRs originating from the main repository
     # which is OK, because in that case the regular `push` trigger will run the workflow
     if: ${{ github.head_ref == '' && github.repository == 'jajik/mod_proxy_cluster-perf-comparison' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ ubuntu-latest, ubuntu-24.04-arm ]
         include:
 
           - name: "2-tomcats"
@@ -107,6 +108,6 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Output-for-${{ matrix.name }}
+          name: Output-for-${{ matrix.name }}-${{ matrix.os }}
           path: output/*
 
