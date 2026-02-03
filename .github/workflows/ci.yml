@@ -21,14 +21,12 @@ on:
       - '.github/dependabot.yml'
       - '.github/workflows/manual.yml'
 
-# This will prevent running the same run under both, PR and commit, triggers
-concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
-  cancel-in-progress: true
-
 jobs:
 
   perf-run:
+    # This will cause the job being skipped on PRs originating from the main repository
+    # which is OK, because in that case the regular `push` trigger will run the workflow
+    if: ${{ github.head_ref == '' && github.repository == 'jajik/mod_proxy_cluster-perf-comparison' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
