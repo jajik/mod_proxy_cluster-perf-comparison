@@ -58,7 +58,7 @@ tomcat_upload_contexts() {
 
 # $1 equals to number of ciphers
 random_number() {
-    expr $(tr -cd 0-9 < /dev/random | head -c${1:-2}) + 0
+    expr $(shuf -i 0-9 -n ${1:-2} -z) + 0
 }
 
 shutdown_tomcats_randomly() {
