@@ -53,6 +53,9 @@ jobs:
             # this is arbitrary, the action is not run with tomcat_affected: 0
             tomcat_action: 'disable'
 
+          - tomcat_count: 20
+            os: ubuntu-24.04-arm
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
