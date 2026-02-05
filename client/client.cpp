@@ -131,15 +131,15 @@ Stat merge(const std::vector<Stat>& stats) {
 
     for (const auto& s : stats) {
         for (const auto& [k, v] : s.responseStatuses) {
-            res.responseStatuses[k] = v;
+            res.responseStatuses[k] += v;
         }
 
         for (const auto& [k, v] : s.errors) {
-            res.errors[k] = v;
+            res.errors[k] += v;
         }
 
         for (const auto& [node, count] : s.nodes) {
-            res.nodes[node] = count;
+            res.nodes[node] += count;
         }
 
         res.average += s.average;
