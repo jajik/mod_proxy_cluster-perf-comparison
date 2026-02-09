@@ -78,7 +78,9 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install gcc maven git curl iproute2 wcstools g++ cmake liblist-moreutils-perl
       - name: Setup  performance tests
-        run: sh setup.sh
+        run: |
+          sh setup.sh
+          yes | docker builder prune
       - name: Run performance tests
         run: sh run-suite.sh
       - name: Make a summary of test runs
