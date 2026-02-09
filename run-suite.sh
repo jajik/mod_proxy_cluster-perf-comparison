@@ -73,7 +73,7 @@ shutdown_tomcats_randomly() {
         tomcat_start $i  > /dev/null 2>&1
         sleep 10
         tomcat_upload_contexts $i > /dev/null 2>&1
-        echo "tomcat$i is back online"
+        echo "$(date) tomcat$i is back online"
         sleep $seed
     done
 }
@@ -84,10 +84,10 @@ disable_tomcats_randomly() {
         rn=$(random_number $ciphers)
         i=$(expr $rn % $TOMCAT_COUNT + 1)
         seed=$(random_number 2)
-        echo "Sending DISABLE-APP to tomcat$i"
+        echo "$(date) Sending DISABLE-APP to tomcat$i"
         curl -s -o /dev/null -i -XDISABLE-APP -d "JVMRoute=tomcat$i" http://localhost:8090/*
         sleep $(expr 20 + $seed)
-        echo "Sending ENABLE-APP to tomcat$i"
+        echo "$(date) Sending ENABLE-APP to tomcat$i"
         curl -s -o /dev/null -i -XENABLE-APP -d "JVMRoute=tomcat$i" http://localhost:8090/*
         sleep $seed
     done
