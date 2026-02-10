@@ -73,10 +73,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - name: Get dependencies
+      - name: Get dependencies and remove unused packages
         run: |
           sudo apt-get update -y
           sudo apt-get install gcc maven git curl iproute2 wcstools g++ cmake liblist-moreutils-perl
+          sudo rm -rf /usr/local/.ghcup /usr/local/lib/android /usr/share/swift /opt/microsoft/msedge/ /opt/google/chrome/
       - name: Setup  performance tests
         run: |
           sh setup.sh
