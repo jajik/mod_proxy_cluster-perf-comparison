@@ -81,7 +81,10 @@ jobs:
       - name: Setup  performance tests
         run: |
           sh setup.sh
-          yes | docker builder prune
+          # create a directory on a filesystem with more space
+          sudo mkdir /mnt/output
+          sudo chmod 777 /mnt/output
+          ln -s /mnt/output output
       - name: Run performance tests
         run: sh run-suite.sh
       - name: Make a summary of test runs
