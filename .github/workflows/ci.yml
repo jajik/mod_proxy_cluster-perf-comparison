@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-      - '*'
+      - '**'
     paths-ignore:
       - '.gitignore'
       - '**.md'
@@ -12,7 +12,7 @@ on:
 
   pull_request:
     branches:
-      - '*'
+      - '**'
     paths-ignore:
       - '.gitignore'
       - '**.md'
