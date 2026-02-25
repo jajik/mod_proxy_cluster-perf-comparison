@@ -99,7 +99,7 @@ run_tests_with() {
         exit 1
     fi
 
-    echo "Running tests with $1"
+    echo "$(date) Running tests with $1"
     # start httpd
     HTTPD_IMG=$1 httpd_start
 
@@ -147,7 +147,7 @@ run_tests_with() {
     version=$(get_version_from_image $1)
     for i in $(seq 1 $REPETITIONS)
     do
-        echo "Running $i/$REPETITIONS run for $version     ($(date))"
+        echo "$(date) Running $i/$REPETITIONS run for $version"
         ipadded=$(printf "%0${PAD}d" $i)
 
         # define RUN_WITH_AB to run the previously used `ab` utility; then instead of summary.sh use ab-summary.sh
