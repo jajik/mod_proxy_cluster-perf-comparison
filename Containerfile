@@ -1,4 +1,4 @@
-FROM fedora:42 AS builder
+FROM fedora:latest AS builder
 
 RUN dnf install cmake gcc g++ wget apr-devel apr-util apr-util-devel openssl-devel pcre-devel redhat-rpm-config wcstools autoconf -y
 
@@ -34,7 +34,7 @@ RUN cp /native/build/modules/*.so /usr/local/apache2/modules/
 RUN grep -rh "#define MOD_CLUSTER_EXPOSED_VERSION " /native > /mpc_version
 
 
-FROM fedora:42
+FROM fedora:latest
 
 LABEL perfsuite-mod_proxy_cluster=
 
