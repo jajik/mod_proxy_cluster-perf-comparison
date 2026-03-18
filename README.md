@@ -39,5 +39,8 @@ to test. See the `Manual` workflow in the `Actions` tab.
 * docker
 * git
 * maven
-* ab (optional)
+* ab
+* C++ compiler
+* cmake
+* java
 
