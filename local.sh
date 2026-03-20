@@ -1,11 +1,12 @@
 # clean previous runs
 rm -rf output/* || true
 rm -rf nodes-*  || true
-sh setup.sh
 
-for count in 2 10 20 50 ## 100 150
+for count in 2 10 20 50
 do
-    echo "Running for $count nodes"
+    echo "#########################################"
+    echo "####### Running for $count nodes"
+    echo "#########################################"
     TOMCAT_COUNT=$count sh run-suite.sh
     sh summary.sh > summary-for-$count
     mkdir nodes-$count
