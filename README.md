@@ -2,6 +2,11 @@
 
 > [!NOTE]
 > Clone this repository with `--recurse-submodules`.
+>
+> If you get an error like `[ERROR] The goal you specified requires a project to execute but there is no
+> POM in this directory` while running `setup.sh`, you probably skipped `--recurse-submodules`. Execute
+> `git submodule update --init` to fix it.
+
 
 To get some basic performance comparison between mod\_proxy\_cluster 1.3.x and 2.x, run:
 
