@@ -8,7 +8,7 @@ do
     echo "####### Running for $count nodes"
     echo "#########################################"
     TOMCAT_COUNT=$count sh run-suite.sh
-    sh summary.sh > summary-for-$count
+    perl summary.pl > summary-for-$count
     mkdir nodes-$count
     mv summary-for-$count output/* nodes-$count/
     echo "Done!"
