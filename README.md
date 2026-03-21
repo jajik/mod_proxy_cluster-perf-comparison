@@ -48,4 +48,5 @@ to test. See the `Manual` workflow in the `Actions` tab.
 * C++ compiler
 * cmake
 * java
+* perl
 
