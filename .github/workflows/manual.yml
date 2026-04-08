@@ -28,6 +28,8 @@ on:
         options:
           - "shutdown"
           - "disable"
+          - "stop"
+          - "kill"
 
       action-count:
         description: "Number of tomcats affected by the action chosen"
@@ -114,8 +116,12 @@ jobs:
             # first we need to determine the action chosen
             if [ ${{ inputs.action }} == "shutdown" ]; then
                 SHUTDOWN_RANDOMLY=${{ inputs.action-count }} sh run-suite.sh 
-            else
+            elif [ ${{ inputs.action }} == "disable" ]; then
                 DISABLE_RANDOMLY=${{ inputs.action-count }} sh run-suite.sh
+            elif [ ${{ inputs.action }} == "stop" ]; then
+                STOP_RANDOMLY=${{ inputs.action-count }} sh run-suite.sh
+            else
+                KILL_RANDOMLY=${{ inputs.action-count }} sh run-suite.sh
             fi
 
       - name: Make a summary of test runs
