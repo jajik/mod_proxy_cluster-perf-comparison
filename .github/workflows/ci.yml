@@ -89,10 +89,11 @@ jobs:
           sudo chmod 777 /mnt/output
           ln -s /mnt/output output
       - name: Run performance tests
-        run: sh run-suite.sh
+        run: sh run-suite.sh 2>&1 | tee output/run-suite.logs
       - name: Make a summary of test runs
         run: |
-          perl summary.pl output/ | tee summary && cp summary output/summary-for-${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }}-${{ matrix.tomcat_count }}-tomcats-${{ matrix.tomcat_affected }}-affected-by-${{ matrix.tomcat_action }}
+          perl summary.pl output/ | tee summary
+          cp summary output/summary-for-${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }}-${{ matrix.tomcat_count }}-tomcats-${{ matrix.tomcat_affected }}-affected-by-${{ matrix.tomcat_action }}
           # preserve environment variables as well
           printenv > output/envvars
       - name: Check Status 200
