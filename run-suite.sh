@@ -8,11 +8,16 @@ TOMCAT_COUNT=${TOMCAT_COUNT:-2}
 CONC_COUNT=${CONC_COUNT:-150}
 REQ_COUNT=${REQ_COUNT:-1200}
 REPETITIONS=${REPETITIONS:-10}
+
 SHUTDOWN_RANDOMLY=${SHUTDOWN_RANDOMLY:-0}
 DISABLE_RANDOMLY=${DISABLE_RANDOMLY:-0}
+STOP_RANDOMLY=${STOP_RANDOMLY:-0}
+KILL_RANDOMLY=${KILL_RANDOMLY:-0}
 
 SHUTDOWN_PROCESS_FILE=${SHUTDOWN_PROCESS_FILE:-shutdown_processes}
 DISABLE_PROCESS_FILE=${DISABLE_PROCESS_FILE:-disable_processes}
+STOP_PROCESS_FILE=${STOP_PROCESS_FILE:-stop_processes}
+KILL_PROCESS_FILE=${KILL_PROCESS_FILE:-kill_processes}
 
 echo "Running with following options:"
 echo "                  TOMCAT_COUNT=$TOMCAT_COUNT"
@@ -21,6 +26,8 @@ echo "                  REQ_COUNT=$REQ_COUNT"
 echo "                  REPETITIONS=$REPETITIONS"
 echo "                  SHUTDOWN_RANDOMLY=${SHUTDOWN_RANDOMLY}"
 echo "                  DISABLE_RANDOMLY=${DISABLE_RANDOMLY}"
+echo "                  STOP_RANDOMLY=${STOP_RANDOMLY}"
+echo "                  KILL_RANDOMLY=${KILL_RANDOMLY}"
 
 . mod_proxy_cluster/test/includes/common.sh
 
@@ -78,6 +85,24 @@ shutdown_tomcats_randomly() {
     done
 }
 
+kill_tomcats_randomly() {
+    ciphers=$(expr length "$TOMCAT_COUNT")
+    while true; do
+        rn=$(random_number $ciphers)
+        i=$(expr $rn % $TOMCAT_COUNT + 1)
+        seed=$(random_number 2)
+        echo "$(date) Killing tomcat$i"
+        tomcat_kill $i > /dev/null 2>&1
+        sleep $(expr 10 + $seed)
+        tomcat_remove $i > /dev/null 2>&1
+        tomcat_start $i  > /dev/null 2>&1
+        sleep 10
+        tomcat_upload_contexts $i > /dev/null 2>&1
+        echo "$(date) tomcat$i is back online"
+        sleep $seed
+    done
+}
+
 disable_tomcats_randomly() {
     ciphers=$(expr length "$TOMCAT_COUNT")
     while true; do
@@ -91,6 +116,90 @@ disable_tomcats_randomly() {
         curl -s -o /dev/null -i -XENABLE-APP -d "JVMRoute=tomcat$i" http://localhost:8090/*
         sleep $seed
     done
+}
+
+stop_tomcats_randomly() {
+    ciphers=$(expr length "$TOMCAT_COUNT")
+    while true; do
+        rn=$(random_number $ciphers)
+        i=$(expr $rn % $TOMCAT_COUNT + 1)
+        seed=$(random_number 2)
+        echo "$(date) Sending STOP-APP to tomcat$i"
+        curl -s -o /dev/null -i -XSTOP-APP -d "JVMRoute=tomcat$i" http://localhost:8090/*
+        sleep $(expr 20 + $seed)
+        echo "$(date) Sending ENABLE-APP to tomcat$i"
+        curl -s -o /dev/null -i -XENABLE-APP -d "JVMRoute=tomcat$i" http://localhost:8090/*
+        sleep $seed
+    done
+}
+
+tomcat_action_start() {
+    touch $SHUTDOWN_PROCESS_FILE
+    for i in $(seq 1 $SHUTDOWN_RANDOMLY);
+    do
+        shutdown_tomcats_randomly $TOMCAT_COUNT &
+        # save the spawn process id into $@ variable
+        pid=$!
+        echo "tomcats will be shutdown randomly and then brought back by process $pid"
+        echo $pid >> $SHUTDOWN_PROCESS_FILE
+    done
+
+    touch $DISABLE_PROCESS_FILE
+    for i in $(seq 1 $DISABLE_RANDOMLY)
+    do
+        disable_tomcats_randomly $TOMCAT_COUNT &
+        pid=$!
+        echo "tomcats will be disabled randomly and then brought back by process $pid"
+        echo $pid >> $DISABLE_PROCESS_FILE
+    done
+
+    touch $STOP_PROCESS_FILE
+    for i in $(seq 1 $STOP_RANDOMLY)
+    do
+        stop_tomcats_randomly $TOMCAT_COUNT &
+        pid=$!
+        echo "tomcats will be stopped randomly and then brought back by process $pid"
+        echo $pid >> $STOP_PROCESS_FILE
+    done
+
+    touch $KILL_PROCESS_FILE
+    for i in $(seq 1 $KILL_RANDOMLY)
+    do
+        kill_tomcats_randomly $TOMCAT_COUNT &
+        pid=$!
+        echo "tomcats will be killed randomly and then brought back by process $pid"
+        echo $pid >> $KILL_PROCESS_FILE
+    done
+}
+
+tomcat_action_clean() {
+    for p in $(cat $SHUTDOWN_PROCESS_FILE)
+    do
+        echo "Killing shutdowning process $p"
+        kill $p
+    done
+    rm $SHUTDOWN_PROCESS_FILE
+
+    for p in $(cat $DISABLE_PROCESS_FILE)
+    do
+        echo "Killing disabling process $p"
+        kill $p
+    done
+    rm $DISABLE_PROCESS_FILE
+
+    for p in $(cat $STOP_PROCESS_FILE)
+    do
+        echo "Killing stopping process $p"
+        kill $p
+    done
+    rm $STOP_PROCESS_FILE
+
+    for p in $(cat $KILL_PROCESS_FILE)
+    do
+        echo "Killing killing process $p"
+        kill $p
+    done
+    rm $KILL_PROCESS_FILE
 }
 
 run_tests_with() {
@@ -120,24 +229,7 @@ run_tests_with() {
     # let everything settle...
     sleep 120
 
-    touch $SHUTDOWN_PROCESS_FILE
-    for i in $(seq 1 $SHUTDOWN_RANDOMLY);
-    do
-        shutdown_tomcats_randomly $TOMCAT_COUNT &
-        # save the spawn process id into $@ variable
-        pid=$!
-        echo "tomcats will be shutdown randomly and then brought back by process $pid"
-        echo $pid >> $SHUTDOWN_PROCESS_FILE
-    done
-
-    touch $DISABLE_PROCESS_FILE
-    for i in $(seq 1 $DISABLE_RANDOMLY)
-    do
-        disable_tomcats_randomly $TOMCAT_COUNT &
-        pid=$!
-        echo "tomcats will be disables randomly and then brought back by process $pid"
-        echo $pid >> $DISABLE_PROCESS_FILE
-    done
+    tomcat_action_start
 
     OUTPUT_FOLDER=$(get_output_folder $1)
     mkdir -p $OUTPUT_FOLDER
@@ -159,19 +251,7 @@ run_tests_with() {
         sleep 10
     done
 
-    for p in $(cat $SHUTDOWN_PROCESS_FILE)
-    do
-        echo "Killing shutdowning process $p"
-        kill $p
-    done
-    rm $SHUTDOWN_PROCESS_FILE
-
-    for p in $(cat $DISABLE_PROCESS_FILE)
-    do
-        echo "Killing disabling process $p"
-        kill $p
-    done
-    rm $DISABLE_PROCESS_FILE
+    tomcat_action_clean
 
     # clean
     for i in $(seq 1 $TOMCAT_COUNT)
