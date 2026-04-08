@@ -224,7 +224,7 @@ die "No directory given" if @ARGV < 1;
 # Process all given directories
 foreach my $arg (@ARGV) {
     say "for $arg\n------------------";
-    my @dirs = glob "$arg/*";
+    my @dirs = grep { -d $_ } (glob "$arg/*");
     foreach my $version_dir (@dirs) {
         my @files = glob "$version_dir/client-run*";
         foreach my $f (@files) {
