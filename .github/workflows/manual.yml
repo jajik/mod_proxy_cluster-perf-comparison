@@ -131,6 +131,6 @@ jobs:
         uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: output
+          name: ${{ inputs.note && format('output for {0}', inputs.note) || format('output') }}
           path: output/*
 
