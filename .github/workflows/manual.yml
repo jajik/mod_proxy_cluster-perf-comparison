@@ -112,8 +112,10 @@ jobs:
                 fi
             done
 
-      - name: Setup  performance tests
-        run: sh setup.sh
+      - name: Setup performance tests
+        run: |
+          sh setup.sh
+          mkdir output
 
       - name: Run performance tests
         run: sh run-suite.sh 2>&1 | tee output/run-suite.logs
