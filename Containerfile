@@ -1,4 +1,4 @@
-FROM fedora:latest AS builder
+FROM fedora:43 AS builder
 
 RUN dnf install cmake gcc g++ wget apr-devel apr-util apr-util-devel openssl-devel pcre-devel redhat-rpm-config wcstools autoconf -y
 
