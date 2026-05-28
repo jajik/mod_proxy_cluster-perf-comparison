@@ -27,6 +27,7 @@ COPY native /native
 # build and install mod_proxy_cluster *.so files.
 RUN mkdir -p /native/build && \
     cd /native/build && \
+    rm -rf * && \
     cmake ../ -G "Unix Makefiles" -DAPACHE_INCLUDE_DIR=/usr/local/apache2/include/ && \
     make
 RUN cp /native/build/modules/*.so /usr/local/apache2/modules/
