@@ -2,7 +2,7 @@ FROM fedora:43 AS builder
 
 RUN dnf install cmake gcc g++ wget apr-devel apr-util apr-util-devel openssl-devel pcre-devel redhat-rpm-config wcstools autoconf -y
 
-ARG HTTPD_SOURCES="https://dlcdn.apache.org/httpd/httpd-2.4.67.tar.gz"
+ARG HTTPD_SOURCES="https://dlcdn.apache.org/httpd/httpd-2.4.68.tar.gz"
 
 ENV HTTPD=${HTTPD_SOURCES}
 
