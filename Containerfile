@@ -28,7 +28,7 @@ COPY native /native
 RUN mkdir -p /native/build && \
     cd /native/build && \
     rm -rf * && \
-    cmake ../ -G "Unix Makefiles" -DAPACHE_INCLUDE_DIR=/usr/local/apache2/include/ && \
+    cmake .. -DCMAKE_C_FLAGS="-Wno-stringop-truncation" -G "Unix Makefiles" -DAPACHE_INCLUDE_DIR=/usr/local/apache2/include/ && \
     make
 RUN cp /native/build/modules/*.so /usr/local/apache2/modules/
 # preserve the version
