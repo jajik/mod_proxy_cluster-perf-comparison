@@ -52,7 +52,7 @@ struct Stat {
     Errors errors;
 
     std::chrono::milliseconds average = 0ms;
-    std::chrono::milliseconds min = 0ms;
+    std::chrono::milliseconds min = std::chrono::milliseconds::max();
     std::chrono::milliseconds max = 0ms;
     std::chrono::milliseconds median = 0ms;
     std::chrono::milliseconds p90 = 0ms;
