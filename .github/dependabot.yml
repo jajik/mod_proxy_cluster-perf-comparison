@@ -4,8 +4,7 @@ updates:
   - package-ecosystem: gitsubmodule
     directory: "/"
     schedule:
-      interval: "cron"
-      cronjob: "0 5 * * *"
+      interval: "daily"
     open-pull-requests-limit: 10
     assignees:
       - jajik
