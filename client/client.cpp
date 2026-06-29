@@ -151,9 +151,9 @@ Stat merge(const std::vector<Stat>& stats) {
     }
 
     std::sort(medians.begin(), medians.end());
-    res.median = medians.size() % 2 == 0
+    res.median = medians.size() % 2 != 0
                 ? medians[medians.size() / 2]
-                : (medians[medians.size() / 2] + medians[(medians.size() + 1) / 2]) / 2;
+                : (medians[medians.size() / 2 - 1] + medians[medians.size() / 2]) / 2;
     res.average = res.average / stats.size();
 
     return res;
@@ -187,9 +187,9 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
 
     std::sort(times.begin(), times.end());
     std::chrono::milliseconds average = std::accumulate(times.begin(), times.end(), 0ms) / times.size();
-    std::chrono::milliseconds median  = times.size() % 2 == 0
+    std::chrono::milliseconds median  = times.size() % 2 != 0
                                       ? times[times.size() / 2]
-                                      : (times[times.size() / 2] + times[(times.size() + 1) / 2]) / 2;
+                                      : (times[times.size() / 2 - 1] + times[times.size() / 2]) / 2;
     // this is probably good enough
     std::chrono::milliseconds p90 = times[times.size() / 10 * 9];
 
