@@ -12,7 +12,7 @@ To get some basic performance comparison between mod\_proxy\_cluster 1.3.x and 2
 
 ```
 sh setup.sh
-sh run.sh
+sh run-suite.sh
 ```
 
 These two files use several variables which you can tweak to influence tests parameters such

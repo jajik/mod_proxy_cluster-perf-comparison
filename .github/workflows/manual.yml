@@ -83,7 +83,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           ref: ${{ inputs.branch || 'master' }}
-
       - name: Checkout submodules
         run: git submodule update --init --recursive
 
@@ -121,7 +120,10 @@ jobs:
         run: sh run-suite.sh 2>&1 | tee output/run-suite.logs
 
       - name: Make a summary of test runs
-        run: perl summary.pl output/ | tee summary && cp summary output/summary-for-${{ matrix.name }}
+        run: |
+          perl summary.pl output/ | tee summary
+          cp summary output/summary-for-manual${{ inputs.note && format(' ({0})', inputs.note) || '' }}
+
 
       - name: Preserve output
         uses: actions/upload-artifact@v6
