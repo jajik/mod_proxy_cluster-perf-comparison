@@ -13,7 +13,7 @@
 using namespace std::literals::chrono_literals;
 
 inline bool isEnvUndefinedOrZero(const std::string& env) {
-    return !(std::getenv(env.c_str()) == nullptr || *std::getenv(env.c_str()) == '0');
+    return std::getenv(env.c_str()) == nullptr || *std::getenv(env.c_str()) == '0';
 }
 
 struct Config {
