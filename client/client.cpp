@@ -78,7 +78,7 @@ std::optional< std::string > getJSESSIONID(const httplib::Headers& headers) {
             }
 
             std::string val = v.substr(start);
-            if (val.starts_with("JSESSIONID")) {
+            if (val.starts_with("JSESSIONID=")) {
                 return { val.substr(11) };
             }
         }
