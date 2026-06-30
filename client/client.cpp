@@ -22,16 +22,13 @@ struct Config {
     int clientCount = 100;
     int reqCount = 1000;
     int delay = 1;
-    bool keepAlive = true;
-    bool checkStickiness = false;
+    bool keepAlive = isEnvUndefinedOrZero("CLOSE_CONN");
+    bool checkStickiness = std::ranges::all_of(std::array{"SHUTDOWN_RANDOMLY", "KILL_RANDOMLY"},
+                                               [](const auto& v) { return isEnvUndefinedOrZero(v); });
 
-    Config(const std::string& h, const std::string& p) : host(h), path(p) {
-        keepAlive = isEnvUndefinedOrZero("CLOSE_CONN");
-        checkStickiness = std::ranges::all_of(std::array{"SHUTDOWN_RANDOMLY", "KILL_RANDOMLY"},
-                                              [](const auto& v) { return isEnvUndefinedOrZero(v); });
-    }
+    Config(const std::string& h, const std::string& p) : host(h), path(p) {}
 
-    Config(const std::string& url) : Config("", "") {
+    Config(const std::string& url) {
         auto pos = url.find_first_of("/");
         if (pos == url.npos) {
             host = url;
