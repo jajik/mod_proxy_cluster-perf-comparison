@@ -66,7 +66,7 @@ std::optional< std::string > getJSESSIONID(const httplib::Headers& headers) {
             std::string::size_type start = 0, n;
 
             while ((n = v.find("; ", start)) != std::string::npos) {
-                std::string val = v.substr(start, n);
+                std::string val = v.substr(start, n - start);
 
                 if (val.starts_with("JSESSIONID=")) {
                     return { val.substr(11) };
@@ -278,6 +278,6 @@ int main(int argc, char* argv[]) {
               << " p90-max: " << result.p90
               << std::endl;
 
-    return result.errors.size();
+    return result.errors.empty() ? 0 : 1;
 }
 
