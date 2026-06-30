@@ -205,6 +205,10 @@ void printParams(const Config& conf) {
         << conf.reqCount << " delay: " << conf.delay << std::endl;
 }
 
+bool paramsOk(const Config& conf) {
+    return conf.clientCount > 0 && conf.reqCount > 0 && conf.delay >= 0;
+}
+
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -231,6 +235,10 @@ int main(int argc, char* argv[]) {
         conf.delay = atoi(argv[4]);
 
     printParams(conf);
+    if (!paramsOk(conf)) {
+        std::cout << "Given parameters are incorrect. They must be > 0 or >= 0 in case of the delay" << std::endl;
+        return 2;
+    }
 
     std::latch latch(conf.clientCount);
     std::vector<std::thread> clients;
