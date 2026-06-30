@@ -8,11 +8,12 @@
 #include <map>
 #include <latch>
 #include <future>
+#include <ranges>
 
 using namespace std::literals::chrono_literals;
 
-inline bool isEnvDefined(const std::string& env) {
-    return std::getenv(env.c_str()) != nullptr;
+inline bool isEnvUndefinedOrZero(const std::string& env) {
+    return !(std::getenv(env.c_str()) == nullptr || *std::getenv(env.c_str()) == '0');
 }
 
 struct Config {
@@ -25,18 +26,16 @@ struct Config {
     bool checkStickiness = false;
 
     Config(const std::string& h, const std::string& p) : host(h), path(p) {
-        keepAlive = !isEnvDefined("CLOSE_CONN");
-        checkStickiness = !isEnvDefined("SHUTDOWN_RANDOMLY") || *std::getenv("SHUTDOWN_RANDOMLY") == '0';
+        keepAlive = isEnvUndefinedOrZero("CLOSE_CONN");
+        checkStickiness = std::ranges::all_of(std::array{"SHUTDOWN_RANDOMLY", "KILL_RANDOMLY"},
+                                              [](const auto& v) { return isEnvUndefinedOrZero(v); });
     }
 
-    Config(const std::string& url) {
-        keepAlive = !isEnvDefined("CLOSE_CONN");
-        checkStickiness = !isEnvDefined("SHUTDOWN_RANDOMLY") || *std::getenv("SHUTDOWN_RANDOMLY") == '0';
-
+    Config(const std::string& url) : Config("", "") {
         auto pos = url.find_first_of("/");
         if (pos == url.npos) {
             host = url;
-            path = "/";            
+            path = "/";
         } else {
             host = url.substr(0, pos);
             path = url.substr(pos, url.length());
