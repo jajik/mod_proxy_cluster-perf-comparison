@@ -9,7 +9,7 @@ use List::MoreUtils qw( uniq );
 
 sub parse_record {
     my $filename = shift;
-    my $fh = open(my $file, "<", $filename) || die "Can't open $filename";
+    my $fh = open(my $file, "<", $filename) || die "Can't open $filename: $!";
     my %db;
     my $curr = undef;
     
@@ -50,7 +50,7 @@ sub create_table {
 
     my %table;
     my @files = keys %$data;
-    my @versions, my @statuses, my @responses, my @errors;
+    my @versions; my @statuses; my @responses; my @errors;
 
     foreach my $f (@files) {
         push @versions, keys %{$data->{$f}};

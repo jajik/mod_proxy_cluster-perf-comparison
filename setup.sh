@@ -69,7 +69,7 @@ echo "Creating an httpd with mod_proxy_cluster container images from all directo
 mkdir -p .tempdir
 cp Containerfile mod_proxy_cluster.conf httpd-container-run.sh .tempdir/
 # set a custom log level if requested
-if [ $HTTPD_LOG_LEVEL ]; then
+if [ "$HTTPD_LOG_LEVEL" ]; then
     echo "Setting log level to $HTTPD_LOG_LEVEL"
     echo "LogLevel $HTTPD_LOG_LEVEL" >> .tempdir/mod_proxy_cluster.conf
 fi
