@@ -174,7 +174,9 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
             cookie.append(*stat.jsessionid);
         }
 
-        auto res = stat.jsessionid ? client.Get(conf.path, { { "Cookie", cookie } }) : client.Get(conf.path);
+        auto res = stat.jsessionid
+                 ? client.Get(conf.path, httplib::Headers{{ "Cookie", cookie }})
+                 : client.Get(conf.path);
         processResult(res, stat, conf.checkStickiness);
         const auto end{std::chrono::steady_clock::now()};
 
