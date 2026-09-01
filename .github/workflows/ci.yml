@@ -30,7 +30,7 @@ jobs:
     # This will cause the job being skipped on PRs originating from the main repository
     # which is OK, because in that case the regular `push` trigger will run the workflow
     if: ${{ github.head_ref == '' && github.repository == 'jajik/mod_proxy_cluster-perf-comparison' }}
-    name: ${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }} (${{ matrix.tomcat_count }} tomcats, ${{ matrix.tomcat_affected }} affected by ${{ matrix.tomcat_action }})
+    name: ${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }} (${{ matrix.tomcat_count }} tomcats${{ matrix.disable && format(', {0} disable', matrix.disable) || '' }}${{ matrix.shutdown && format(', {0} shutdown', matrix.shutdown) || '' }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -126,7 +126,7 @@ jobs:
       - name: Make a summary of test runs
         run: |
           perl summary.pl output/ | tee summary
-          cp summary output/summary-for-${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }}-${{ matrix.tomcat_count }}-tomcats-${{ matrix.tomcat_affected }}-affected-by-${{ matrix.tomcat_action }}
+          cp summary output/summary-for-${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }}-${{ matrix.tomcat_count }}-tomcats${{ matrix.disable && format('-{0}-disable', matrix.disable) || '' }}${{ matrix.shutdown && format('-{0}-shutdown', matrix.shutdown) || '' }}
           # preserve environment variables as well
           printenv > output/envvars
       - name: Check Status 200
@@ -136,6 +136,6 @@ jobs:
         uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: Output-for-${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }}-${{ matrix.tomcat_count }}-tomcats-${{ matrix.tomcat_affected }}-affected-by-${{ matrix.tomcat_action }}
+          name: Output-for-${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }}-${{ matrix.tomcat_count }}-tomcats${{ matrix.disable && format('-{0}-disable', matrix.disable) || '' }}${{ matrix.shutdown && format('-{0}-shutdown', matrix.shutdown) || '' }}
           path: output/*
 
