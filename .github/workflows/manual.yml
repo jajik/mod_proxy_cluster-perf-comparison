@@ -21,20 +21,25 @@ on:
         type: number
         default: 2
 
-      action:
-        description: "Action that will happen randomly to running tomcats"
-        default: "disable"
-        type: choice
-        options:
-          - "shutdown"
-          - "disable"
-          - "stop"
-          - "kill"
-
-      action-count:
-        description: "Number of tomcats affected by the action chosen"
+      shutdown:
+        description: "Number of tomcats randomly shutdown during tests"
         type: number
-        default: 1      
+        default: 0
+
+      disable:
+        description: "Number of tomcats randomly disabled during tests"
+        type: number
+        default: 0
+
+      kill:
+        description: "Number of tomcats randomly killed during tests"
+        type: number
+        default: 0
+
+      stop:
+        description: "Number of tomcats randomly stopped during tests"
+        type: number
+        default: 0
 
       clients:
         description: "Number of clients (connections)"
@@ -60,8 +65,8 @@ on:
 
       branch:
         description: "branch to checkout instead of master (default)"
-        default: "master"
         type: string
+        default: "master"
 
 jobs:
 
@@ -73,10 +78,10 @@ jobs:
       CONC_COUNT: ${{ inputs.clients }}
       REQ_COUNT: ${{ inputs.requests }}
       REPETITIONS: ${{ inputs.repetitions }}
-      SHUTDOWN_RANDOMLY: ${{ inputs.action == 'shutdown' && inputs.action-count || 0 }}
-      DISABLE_RANDOMLY:  ${{ inputs.action == 'disable'  && inputs.action-count || 0 }}
-      STOP_RANDOMLY:     ${{ inputs.action == 'stop'     && inputs.action-count || 0 }}
-      KILL_RANDOMLY:     ${{ inputs.action == 'kill'     && inputs.action-count || 0 }}
+      SHUTDOWN_RANDOMLY: ${{ inputs.shutdown }}
+      DISABLE_RANDOMLY:  ${{ inputs.disable  }}
+      STOP_RANDOMLY:     ${{ inputs.stop     }}
+      KILL_RANDOMLY:     ${{ inputs.kill     }}
 
     steps:
       - name: Checkout
@@ -122,7 +127,7 @@ jobs:
       - name: Make a summary of test runs
         run: |
           perl summary.pl output/ | tee summary
-          cp summary output/summary-for-manual${{ inputs.note && format(' ({0})', inputs.note) || '' }}
+          cp summary output/summary-for-manual${{ inputs.note && format('-({0})', inputs.note) || '' }}
 
 
       - name: Preserve output
