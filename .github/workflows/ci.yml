@@ -30,63 +30,63 @@ jobs:
     # This will cause the job being skipped on PRs originating from the main repository
     # which is OK, because in that case the regular `push` trigger will run the workflow
     if: ${{ github.head_ref == '' && github.repository == 'jajik/mod_proxy_cluster-perf-comparison' }}
-    name: ${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }} (${{ matrix.tomcat_count }} tomcats${{ matrix.disable && format(', {0} disable', matrix.disable) || '' }}${{ matrix.shutdown && format(', {0} shutdown', matrix.shutdown) || '' }})
+    name: ${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }} (${{ matrix.tomcat_count }} tomcats${{ matrix.disable && format(', {0} disable', matrix.disable) || '' }}${{ matrix.shutdown && format(', {0} shutdown', matrix.shutdown) || '' }}${{ matrix.stop && format(', {0} stop', matrix.stop) || '' }}${{ matrix.kill && format(', {0} kill', matrix.kill) || '' }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - tomcat_count: 2
+          - tomcat_count: 10
             os: ubuntu-latest
-          - tomcat_count: 20
+
+          - tomcat_count: 25
             os: ubuntu-latest
+
           - tomcat_count: 50
             os: ubuntu-latest
 
-          - tomcat_count: 2
+          - tomcat_count: 10
+            shutdown: 2
+            disable: 2
+            stop: 2
+            os: ubuntu-latest
+
+          - tomcat_count: 10
             shutdown: 1
+            disable: 2
+            kill: 1 # kill is quite destructive, so the results will be (more) variable
+            stop: 2
             os: ubuntu-latest
-          - tomcat_count: 2
-            disable: 1
+
+          - tomcat_count: 25
+            shutdown: 2
+            disable: 3
+            stop: 3
+            os: ubuntu-latest
+
+          - tomcat_count: 25
+            shutdown: 2
+            disable: 8
+            stop: 8
             os: ubuntu-latest
 
           - tomcat_count: 50
-            shutdown: 25
-            os: ubuntu-latest
-          - tomcat_count: 50
-            disable: 25
-            os: ubuntu-latest
-          - tomcat_count: 20
             shutdown: 10
-            os: ubuntu-latest
-          - tomcat_count: 20
             disable: 10
+            kill: 5 # kill is quite destructive, so the results will be (more) variable
+            stop: 10
             os: ubuntu-latest
 
           - tomcat_count: 50
-            shutdown: 35
+            shutdown: 10
+            disable: 10
+            stop: 10
             os: ubuntu-latest
-          - tomcat_count: 50
-            disable: 35
-            os: ubuntu-latest
-          - tomcat_count: 50
-            shutdown: 35
-            os: ubuntu-24.04-arm
-          - tomcat_count: 50
-            disable: 35
-            os: ubuntu-24.04-arm
 
-          - tomcat_count: 20
-            shutdown: 14
-            os: ubuntu-latest
-          - tomcat_count: 20
-            disable: 14
-            os: ubuntu-latest
-          - tomcat_count: 20
-            shutdown: 14
-            os: ubuntu-24.04-arm
-          - tomcat_count: 20
-            disable: 14
+          - tomcat_count: 50
+            shutdown: 10
+            disable: 10
+            stop: 10
             os: ubuntu-24.04-arm
 
     env:
@@ -126,7 +126,7 @@ jobs:
       - name: Make a summary of test runs
         run: |
           perl summary.pl output/ | tee summary
-          cp summary output/summary-for-${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }}-${{ matrix.tomcat_count }}-tomcats${{ matrix.disable && format('-{0}-disable', matrix.disable) || '' }}${{ matrix.shutdown && format('-{0}-shutdown', matrix.shutdown) || '' }}
+          cp summary output/summary-for-${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }}-${{ matrix.tomcat_count }}-tomcats${{ matrix.disable && format('-{0}-disable', matrix.disable) || '' }}${{ matrix.shutdown && format('-{0}-shutdown', matrix.shutdown) || '' }}${{ matrix.stop && format('-{0}-stop', matrix.stop) || '' }}${{ matrix.kill && format('-{0}-kill', matrix.kill) || '' }}
           # preserve environment variables as well
           printenv > output/envvars
       - name: Check Status 200
@@ -136,6 +136,6 @@ jobs:
         uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: Output-for-${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }}-${{ matrix.tomcat_count }}-tomcats${{ matrix.disable && format('-{0}-disable', matrix.disable) || '' }}${{ matrix.shutdown && format('-{0}-shutdown', matrix.shutdown) || '' }}
+          name: Output-for-${{ contains(matrix.os, 'arm') && 'ARM' || 'x86' }}-${{ matrix.tomcat_count }}-tomcats${{ matrix.disable && format('-{0}-disable', matrix.disable) || '' }}${{ matrix.shutdown && format('-{0}-shutdown', matrix.shutdown) || '' }}${{ matrix.stop && format('-{0}-stop', matrix.stop) || '' }}${{ matrix.kill && format('-{0}-kill', matrix.kill) || '' }}
           path: output/*
 
