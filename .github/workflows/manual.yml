@@ -125,9 +125,12 @@ jobs:
         run: sh run-suite.sh 2>&1 | tee output/run-suite.logs
 
       - name: Make a summary of test runs
+        env:
+          NOTE: ${{ inputs.note }}
         run: |
           perl summary.pl output/ | tee summary
-          cp summary output/summary-for-manual${{ inputs.note && format('-({0})', inputs.note) || '' }}
+          ESC_NOTE="${NOTE// /-}"
+          cp summary "output/summary-for-manual${NOTE:+-${ESC_NOTE}}"
 
 
       - name: Preserve output
