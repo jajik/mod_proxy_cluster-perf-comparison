@@ -24,7 +24,7 @@ struct Config {
     int reqCount = 1000;
     int delay = 1;
     bool keepAlive = isEnvUndefinedOrZero("CLOSE_CONN");
-    bool checkStickiness = std::ranges::all_of(std::array{"SHUTDOWN_RANDOMLY", "KILL_RANDOMLY"},
+    bool checkStickiness = std::ranges::all_of(std::array{"SHUTDOWN_RANDOMLY", "KILL_RANDOMLY", "STOP_RANDOMLY"},
                                                [](const auto& v) { return isEnvUndefinedOrZero(v); });
 
     Config(const std::string& h, const std::string& p) : host(h), path(p) {}
@@ -177,6 +177,20 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
         auto res = stat.jsessionid
                  ? client.Get(conf.path, httplib::Headers{{ "Cookie", cookie }})
                  : client.Get(conf.path);
+        // With keep-alive, the server may close a reused connection right as we
+        // send the next request; httplib surfaces that as a Read/ConnectionClosed
+        // error and does not retry itself. Retry once on a fresh connection so
+        // these benign races don't get recorded as errors.
+        if (conf.keepAlive && !res &&
+            (res.error() == httplib::Error::Read ||
+             res.error() == httplib::Error::ConnectionClosed)) {
+            auto oldError = res.error();
+            res = stat.jsessionid
+                ? client.Get(conf.path, httplib::Headers{{ "Cookie", cookie }})
+                : client.Get(conf.path);
+            std::cout << std::chrono::system_clock::now() << " retried GET for " << conf.path
+                      << " after " << oldError << " was " << (res ? "OK" : "NOK") << std::endl;
+        }
         processResult(res, stat, conf.checkStickiness);
         const auto end{std::chrono::steady_clock::now()};
 
