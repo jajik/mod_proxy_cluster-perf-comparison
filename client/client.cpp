@@ -177,6 +177,17 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
         auto res = stat.jsessionid
                  ? client.Get(conf.path, httplib::Headers{{ "Cookie", cookie }})
                  : client.Get(conf.path);
+        // With keep-alive, the server may close a reused connection right as we
+        // send the next request; httplib surfaces that as a Read/ConnectionClosed
+        // error and does not retry itself. Retry once on a fresh connection so
+        // these benign races don't get recorded as errors.
+        if (conf.keepAlive && !res &&
+            (res.error() == httplib::Error::Read ||
+             res.error() == httplib::Error::ConnectionClosed)) {
+            res = stat.jsessionid
+                ? client.Get(conf.path, httplib::Headers{{ "Cookie", cookie }})
+                : client.Get(conf.path);
+        }
         processResult(res, stat, conf.checkStickiness);
         const auto end{std::chrono::steady_clock::now()};
 
