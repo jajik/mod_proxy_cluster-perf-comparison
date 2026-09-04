@@ -24,7 +24,7 @@ struct Config {
     int reqCount = 1000;
     int delay = 1;
     bool keepAlive = isEnvUndefinedOrZero("CLOSE_CONN");
-    bool checkStickiness = std::ranges::all_of(std::array{"SHUTDOWN_RANDOMLY", "KILL_RANDOMLY"},
+    bool checkStickiness = std::ranges::all_of(std::array{"SHUTDOWN_RANDOMLY", "KILL_RANDOMLY", "STOP_RANDOMLY"},
                                                [](const auto& v) { return isEnvUndefinedOrZero(v); });
 
     Config(const std::string& h, const std::string& p) : host(h), path(p) {}
