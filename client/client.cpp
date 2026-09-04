@@ -184,9 +184,12 @@ void execute(std::promise<Stat> promise, const Config& conf, std::latch& latch) 
         if (conf.keepAlive && !res &&
             (res.error() == httplib::Error::Read ||
              res.error() == httplib::Error::ConnectionClosed)) {
+            auto oldError = res.error();
             res = stat.jsessionid
                 ? client.Get(conf.path, httplib::Headers{{ "Cookie", cookie }})
                 : client.Get(conf.path);
+            std::cout << std::chrono::system_clock::now() << " retried GET for " << conf.path
+                      << " after " << oldError << " was " << (res ? "OK" : "NOK") << std::endl;
         }
         processResult(res, stat, conf.checkStickiness);
         const auto end{std::chrono::steady_clock::now()};
