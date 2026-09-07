@@ -56,6 +56,7 @@ struct Stat {
 
 
     std::optional< std::string > jsessionid;
+    unsigned stickinessBreaks = 0;
     std::map< std::string, int > nodes;
 };
 
@@ -145,6 +146,7 @@ Stat merge(const std::vector<Stat>& stats) {
         res.min = std::min(res.min, s.min);
         res.max = std::max(res.max, s.max);
         res.p90 = std::max(res.p90, s.p90);
+        res.stickinessBreaks += s.stickinessBreaks;
 
         medians.push_back(s.median);
     }
@@ -296,6 +298,8 @@ int main(int argc, char* argv[]) {
             std::cout << "    " << n << ": " << count << std::endl;
         }
     }
+
+    std::cout << "stickiness breaks: " << result.stickinessBreaks << std::endl;
 
     std::cout << "avg: " << result.average
               << " min: " << result.min
