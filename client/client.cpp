@@ -112,6 +112,8 @@ void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness)
                   << " but got: " << *val << " (in error " << res << ")" << std::endl;
         // We'll record the stickyness break as an additional error by using Error::Success (TODO: not ideal)
         stat.errors[httplib::Error::Success]++;
+        // set the new jsessionid instead of preserving the old one
+        stat.jsessionid = val;
     }
 
     if (val) {
