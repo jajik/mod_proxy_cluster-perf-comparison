@@ -56,6 +56,7 @@ struct Stat {
 
 
     std::optional< std::string > jsessionid;
+    unsigned stickinessBreaks = 0;
     std::map< std::string, int > nodes;
 };
 
@@ -112,6 +113,8 @@ void processResult(const httplib::Result& res, Stat& stat, bool checkStickiness)
                   << " but got: " << *val << " (in error " << res << ")" << std::endl;
         // We'll record the stickyness break as an additional error by using Error::Success (TODO: not ideal)
         stat.errors[httplib::Error::Success]++;
+        // set the new jsessionid instead of preserving the old one
+        stat.jsessionid = val;
     }
 
     if (val) {
@@ -143,6 +146,7 @@ Stat merge(const std::vector<Stat>& stats) {
         res.min = std::min(res.min, s.min);
         res.max = std::max(res.max, s.max);
         res.p90 = std::max(res.p90, s.p90);
+        res.stickinessBreaks += s.stickinessBreaks;
 
         medians.push_back(s.median);
     }
@@ -294,6 +298,8 @@ int main(int argc, char* argv[]) {
             std::cout << "    " << n << ": " << count << std::endl;
         }
     }
+
+    std::cout << "stickiness breaks: " << result.stickinessBreaks << std::endl;
 
     std::cout << "avg: " << result.average
               << " min: " << result.min
