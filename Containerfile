@@ -1,8 +1,8 @@
-FROM fedora:latest AS builder
+FROM fedora:44 AS builder
 
 RUN dnf install cmake gcc g++ wget apr-devel apr-util apr-util-devel openssl-devel pcre-devel redhat-rpm-config wcstools autoconf -y
 
-ARG HTTPD_SOURCES="https://dlcdn.apache.org/httpd/httpd-2.4.69.tar.gz"
+ARG HTTPD_SOURCES="https://dlcdn.apache.org/httpd/httpd-2.4.70.tar.gz"
 
 ENV HTTPD=${HTTPD_SOURCES}
 
@@ -35,7 +35,7 @@ RUN cp /native/build/modules/*.so /usr/local/apache2/modules/
 RUN grep -rh "#define MOD_CLUSTER_EXPOSED_VERSION " /native > /mpc_version
 
 
-FROM fedora:latest
+FROM fedora:44
 
 LABEL perfsuite-mod_proxy_cluster=
 
